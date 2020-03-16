@@ -7,6 +7,10 @@
 int main(){
     std::vector<Eigen::Vector3d> ref_X, def_X;
     std::vector<Eigen::Vector4i> tetra;
+
+    // object loader should load to ref_X
+    // init ref_X
+
     // shape??
     std::cout << ref_X.size() << " nodes." << std::endl;
     std::cout << tetra.size() << " tetrahedral." << std::endl;

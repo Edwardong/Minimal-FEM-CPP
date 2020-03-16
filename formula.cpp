@@ -121,7 +121,6 @@ std::vector<Eigen::Vector3d> compute_dF(std::vector<Eigen::Vector3d> def_X,
 }
 
 std::vector<Eigen::Vector3d> update_XV(std::vector<Eigen::Vector3d> &def_X,
-                                       std::vector<Eigen::Vector3d> dX,
                                        std::vector<Eigen::Vector4i> T,
                                        std::vector<Eigen::Vector3d> &V,
                                        std::vector<Eigen::Matrix3d> B,
