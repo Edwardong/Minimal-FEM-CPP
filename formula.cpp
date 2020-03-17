@@ -1,6 +1,6 @@
-#include <eigen3/Eigen/Eigen>
-#include <opencv2/opencv.hpp>
+
 #include <iostream>
+#include <eigen3/Eigen/Eigen>
 #include <vector>
 #include "stdlib.h"
 #include "formula.hpp"
@@ -97,10 +97,10 @@ std::vector<Eigen::Vector3d> compute_dF(std::vector<Eigen::Vector3d> def_X,
              i[1]-l[1], j[1]-l[1], k[1]-l[1],
              i[2]-l[2], j[2]-l[2], k[2]-l[2];
 
-        Eigen::Vector3d i = dX[T[m][0]];
-        Eigen::Vector3d j = dX[T[m][1]];
-        Eigen::Vector3d k = dX[T[m][2]];
-        Eigen::Vector3d l = dX[T[m][3]];
+        i = dX[T[m][0]];
+        j = dX[T[m][1]];
+        k = dX[T[m][2]];
+        l = dX[T[m][3]];
         Eigen::Matrix3d dD;
         dD << i[0]-l[0], j[0]-l[0], k[0]-l[0],
              i[1]-l[1], j[1]-l[1], k[1]-l[1],

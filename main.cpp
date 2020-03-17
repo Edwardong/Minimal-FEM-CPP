@@ -1,8 +1,10 @@
-#include <iostream>
-#include <eigen3/Eigen/Eigen>
 #include "formula.hpp"
 #include "object.hpp"
+#include <iostream>
+#include <eigen3/Eigen/Eigen>
+
 #define N_STEPS 25 // number of iterations
+
 
 int main(){
     std::vector<Eigen::Vector3d> ref_X, def_X;
@@ -10,8 +12,8 @@ int main(){
 
     // object loader should load to ref_X
     // init ref_X
-
-    // shape??
+    load_obj(ref_X, tetra);
+    // do I need shape?
     std::cout << ref_X.size() << " nodes." << std::endl;
     std::cout << tetra.size() << " tetrahedral." << std::endl;
 
