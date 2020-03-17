@@ -1,13 +1,20 @@
 gxx = g++
+VERSION_FLAG = -std=c++11
+objects =  object.o formula.o
 
-DEPENDENCIES =  object.o formula.o main.o
+all: FEM
 
-all: main
+# main: ${DEPENDENCIES}
+# 	${gxx} $^ -o $@
 
-main: ${DEPENDENCIES}
-	${gxx} $^ -o $@
-	./main
-	# rm *.o main 
+FEM:main.cpp $(objects)
+	${gxx} ${VERSION_FLAG} -Wall main.cpp $(objects) -o FEM
+
+object.o: object.cpp
+	${gxx} -c ${VERSION_FLAG} -Wall object.cpp -o object.o
+
+formula.o: formula.cpp
+	${gxx} -c ${VERSION_FLAG} -Wall formula.cpp -o formula.o
 
 clean:
-	rm *.o main
+	rm FEM $(objects)
