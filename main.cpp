@@ -23,12 +23,16 @@ int main(){
     std::vector<double> W;
     precompute(ref_X, tetra, B, W); // compute B and W
 
-    std::vector<Eigen::Vector3d> V; // velocity
+    std::vector<Eigen::Vector3d> V(ref_X.size(), Eigen::Vector3d(0, 0, 0)); // velocity
     std::vector<Eigen::Vector3d> F; // force
+
+    // init all velocities to 0
 
     for (size_t i = 1; i <= N_STEPS; i++){
         F = update_XV(def_X, tetra, V, B, W);
-        // std::cout << "computed force: " << F << std::endl;
+
+        // compute forces for debug
+        for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
     }
 
     return 0;

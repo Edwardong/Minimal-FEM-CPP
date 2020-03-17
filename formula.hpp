@@ -2,8 +2,6 @@
 #define FORMULA_HPP
 
 #include <eigen3/Eigen/Eigen>
-// #include <../local/include/opencv4/opencv2/opencv.hpp>
-// #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <vector>
 

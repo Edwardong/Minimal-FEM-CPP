@@ -1,23 +1,19 @@
-
-#include <iostream>
-#include <eigen3/Eigen/Eigen>
-#include <vector>
 #include "stdlib.h"
 #include "formula.hpp"
 
 void precompute(std::vector<Eigen::Vector3d> X,
-                               std::vector<Eigen::Vector4i> T,
-                               std::vector<Eigen::Matrix3d> &B,
-                               std::vector<double> &W){
+                std::vector<Eigen::Vector4i> T,
+                std::vector<Eigen::Matrix3d> &B,
+                std::vector<double> &W){
     for (auto &t : T){
         Eigen::Vector3d i =  X[t[0]];
         Eigen::Vector3d j =  X[t[1]];
         Eigen::Vector3d k =  X[t[2]];
         Eigen::Vector3d l =  X[t[3]];
         Eigen::Matrix3d D;
-        D << i[0]-l[0], j[0]-l[0], k[0]-l[0],
-             i[1]-l[1], j[1]-l[1], k[1]-l[1],
-             i[2]-l[2], j[2]-l[2], k[2]-l[2];
+        D<< i[0]-l[0], j[0]-l[0], k[0]-l[0],
+            i[1]-l[1], j[1]-l[1], k[1]-l[1],
+            i[2]-l[2], j[2]-l[2], k[2]-l[2];
         B.push_back(D.inverse());
         W.push_back(abs(D.determinant() / 6.0));
     }
@@ -31,10 +27,10 @@ Eigen::Matrix3d compute_P(Eigen::Matrix3d F){
 }
 
 
-std::vector<Eigen::Vector3d> compute_F(std::vector<Eigen::Vector3d> def_X,
-                                       std::vector<Eigen::Vector4i> T,
-                                       std::vector<Eigen::Matrix3d> B,
-                                       std::vector<double> W){
+std::vector<Eigen::Vector3d> compute_F( std::vector<Eigen::Vector3d> def_X,
+                                        std::vector<Eigen::Vector4i> T,
+                                        std::vector<Eigen::Matrix3d> B,
+                                        std::vector<double> W){
     //TO-Check
     //std::vector<Eigen::Vector3d> f(def_X.size(), Eigen::Vector3d(0,0,0));
     std::vector<Eigen::Vector3d> f;
@@ -48,9 +44,9 @@ std::vector<Eigen::Vector3d> compute_F(std::vector<Eigen::Vector3d> def_X,
         Eigen::Vector3d k = def_X[T[m][2]];
         Eigen::Vector3d l = def_X[T[m][3]];
         Eigen::Matrix3d D;
-        D << i[0]-l[0], j[0]-l[0], k[0]-l[0],
-             i[1]-l[1], j[1]-l[1], k[1]-l[1],
-             i[2]-l[2], j[2]-l[2], k[2]-l[2];
+        D<< i[0]-l[0], j[0]-l[0], k[0]-l[0],
+            i[1]-l[1], j[1]-l[1], k[1]-l[1],
+            i[2]-l[2], j[2]-l[2], k[2]-l[2];
         Eigen::Matrix3d F = D * B[m];
         Eigen::Matrix3d P = compute_P(F);
 
@@ -93,19 +89,18 @@ std::vector<Eigen::Vector3d> compute_dF(std::vector<Eigen::Vector3d> def_X,
         Eigen::Vector3d k = def_X[T[m][2]];
         Eigen::Vector3d l = def_X[T[m][3]];
         Eigen::Matrix3d D;
-        D << i[0]-l[0], j[0]-l[0], k[0]-l[0],
-             i[1]-l[1], j[1]-l[1], k[1]-l[1],
-             i[2]-l[2], j[2]-l[2], k[2]-l[2];
+        D<< i[0]-l[0], j[0]-l[0], k[0]-l[0],
+            i[1]-l[1], j[1]-l[1], k[1]-l[1],
+            i[2]-l[2], j[2]-l[2], k[2]-l[2];
 
         i = dX[T[m][0]];
         j = dX[T[m][1]];
         k = dX[T[m][2]];
         l = dX[T[m][3]];
         Eigen::Matrix3d dD;
-        dD << i[0]-l[0], j[0]-l[0], k[0]-l[0],
-             i[1]-l[1], j[1]-l[1], k[1]-l[1],
-             i[2]-l[2], j[2]-l[2], k[2]-l[2];
-
+        dD<<i[0]-l[0], j[0]-l[0], k[0]-l[0],
+            i[1]-l[1], j[1]-l[1], k[1]-l[1],
+            i[2]-l[2], j[2]-l[2], k[2]-l[2];
         Eigen::Matrix3d F = D * B[m];
         Eigen::Matrix3d dF = dD * B[m];
         Eigen::Matrix3d dP = compute_dP(F,dF);
@@ -120,13 +115,13 @@ std::vector<Eigen::Vector3d> compute_dF(std::vector<Eigen::Vector3d> def_X,
     return df;
 }
 
-std::vector<Eigen::Vector3d> update_XV(std::vector<Eigen::Vector3d> &def_X,
-                                       std::vector<Eigen::Vector4i> T,
-                                       std::vector<Eigen::Vector3d> &V,
-                                       std::vector<Eigen::Matrix3d> B,
-                                       std::vector<double> W){
+std::vector<Eigen::Vector3d> update_XV( std::vector<Eigen::Vector3d> &def_X,
+                                        std::vector<Eigen::Vector4i> T,
+                                        std::vector<Eigen::Vector3d> &V,
+                                        std::vector<Eigen::Matrix3d> B,
+                                        std::vector<double> W){
     std::vector<Eigen::Vector3d> Fe = compute_F(def_X, T, B, W);
-    std::vector<Eigen::Vector3d> Fd = compute_dF(def_X,V,T,B,W);
+    std::vector<Eigen::Vector3d> Fd = compute_dF(def_X, V, T, B, W);
     std::vector<Eigen::Vector3d> F;
     for (int i =0; i < Fd.size(); i++){
         Fd[i] *= (-1) * GAMMA;
