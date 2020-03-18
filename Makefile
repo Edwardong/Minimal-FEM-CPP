@@ -19,9 +19,13 @@ main: ${DEPENDENCIES}
 tetgen: 
 	cd ${TETGEN_DIR} && make tetlib 
 
-test_loader: test_loader.o loader.o
+test_loader: test_loader.o loader.o tetgen
 	${gxx} ${CXXFLAGS} test_loader.o loader.o ${TETGEN_DIR}/libtet.a -o $@.out
 	./$@.out
-	
+
+test_object: test_object.o object.o
+	${gxx} ${CXXFLAGS} $^ -o $@.out
+	./$@.out
+
 clean:
 	rm *.o *.out main include/tetgen/*.a include/tetgen/*.o

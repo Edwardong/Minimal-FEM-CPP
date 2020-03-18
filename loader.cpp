@@ -1,4 +1,5 @@
 #include "loader.hpp"
+#include "object.hpp"
 #include "include/tetgen/tetgen.h" 
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
@@ -7,6 +8,7 @@
 
 // !!! IMPORTANT: ONLY THE FIRST SHAPE WILL BE LOADED
 
+// cut string %%%a$$$ into %%%a and $$$
 std::string cutAt(std::string& s, char a) {
     int index = s.find_first_of(a);
     if(index == std::string::npos)
@@ -18,20 +20,43 @@ std::string cutAt(std::string& s, char a) {
     return ret;
 }
 
+// clean string aa%%% into %%%
+std::string& clean(std::string& s, char a) {
+    while(s.size() > 0 && s[0] == a)
+        s = s.substr(1, s.size()-1);
+    return s;
+}
 
-bool loadObjFile(const char* filename, std::vector<double>& vertices, std::vector<std::vector<int>>& polygons) {
+// cut string %%%aa$$$ into %%% and $$$
+std::string cleanCut(std::string& s, char a) {
+    for(int i = 0; i < s.size(); i++) {
+        if(s[i] == a) {
+            std::string ret = s.substr(0, i);
+            while(s[i] == a)
+                i++;
+            s = s.substr(i, s.size() - i);
+            return ret;
+        }
+    }
+    std::string sCopy = s;
+    s = std::string("");
+    return sCopy;
+}
+
+void readObjFile(const char* filename, std::vector<double>& vertices, std::vector<std::vector<int>>& polygons) {
 
     std::ifstream file(filename);
-    if(file.bad()) return false;
+    if(file.bad()) return;
     while(!file.eof()) {
         std::string line;
         getline(file, line);
 
         std::string datatype = cutAt(line, ' ');
+        clean(line, ' ');
         // vertice 
         if(datatype.length() >= 2 && datatype[0] == 'v' && datatype[1] == ' ') {
             for(int i = 0; i < 3; i++) {
-                std::string v = cutAt(line, ' ');
+                std::string v = cleanCut(line, ' ');
                 vertices.push_back(std::stod(v));
             }
         }
@@ -41,7 +66,7 @@ bool loadObjFile(const char* filename, std::vector<double>& vertices, std::vecto
         if(datatype.length() >= 2 && datatype[0] == 'f' && datatype[1] == ' ') {
             std::vector<int> polygon;
             while(!line.empty()) {
-                std::string vTuple = cutAt(line, ' ');
+                std::string vTuple = cleanCut(line, ' ');
                 std::string v = cutAt(vTuple, '/');
                 v.pop_back();
                 polygon.push_back(std::stoi(v));
@@ -115,18 +140,65 @@ void tetgen(char* filename, std::vector<double> vertices, std::vector<std::vecto
     outputFilenameString.copy(outputFilename, outputFilenameString.size() + 1);
     out.save_nodes(outputFilename);
     out.save_elements(outputFilename);
-    out.save_faces(outputFilename);
+    // out.save_faces(outputFilename);
 
 }
 
+Object readTetgenFile(char* filename) {
+    Object obj;
 
-// bool load(std::vector<Object>* X, const char* filename) {
+    std::ifstream nodeFile(std::string(filename) + ".node");
+    if(!nodeFile.good() || nodeFile.eof()) {
+        std::cout<<"Error in loader.cpp::readTetgenFile: nodeFile is not good or eof."<<std::endl;
+        return obj;
+    }
+    std::string line;
+    getline(nodeFile, line); // first line
+    int numVertices = std::stoi(cleanCut(line, ' '));
+    for(int ln = 0; ln < numVertices && !nodeFile.eof(); ln++) {
+        getline(nodeFile, line);
+        cleanCut(line, ' '); // useless index
+        double x = stod(cleanCut(line, ' '));
+        double y = stod(cleanCut(line, ' '));
+        double z = stod(cleanCut(line, ' '));
+        Eigen::Vector3d v(x,y,z);
+        obj.nodes.push_back(v);
+    }
+    nodeFile.close();
+
+    std::ifstream eleFile(std::string(filename) + ".ele");
+    if(!eleFile.good() || eleFile.eof()) {
+        std::cout<<"Error in loader.cpp::readTetgenFile: eleFile is not good or eof."<<std::endl;
+        return obj;
+    }
+    std::string line;
+    getline(eleFile, line); // first line
+    int numVertices = std::stoi(cleanCut(line, ' '));
+    for(int ln = 0; ln < numVertices && !eleFile.eof(); ln++) {
+        getline(eleFile, line);
+        cleanCut(line, ' '); // useless index
+        int x = stod(cleanCut(line, ' '));
+        int y = stod(cleanCut(line, ' '));
+        int z = stod(cleanCut(line, ' '));
+        int w = stod(cleanCut(line, ' '));
+        Eigen::Vector4i t(x,y,z,w);
+        obj.tetras.push_back(t);
+    }
+    eleFile.close();
+
+    return obj;
+}
+
+
+
+
+bool load(std::vector<Object>* X, const char* filename) {
 
     
-//     std::vector<double> vertices;
-//     std::vector<std::vector<int>> polygons;
-//     loadObjFile(filename, vertices, polygons);
+    std::vector<double> vertices;
+    std::vector<std::vector<int>> polygons;
+    loadObjFile(filename, vertices, polygons);
 
 
-// }
+}
 

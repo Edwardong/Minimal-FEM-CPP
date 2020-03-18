@@ -7,13 +7,17 @@ const char* FILENAME = "models/redundant_unit_cube.obj";
 
 
 int main(){
-    // std::vector<Object> X;
-    // load(&X, FILENAME);
+
+    auto obj = readTetgenFile("tmp_redundant_unit_cube");
+    for(auto i : obj.nodes) {
+        std::cout<<i<<std::endl<<std::endl;
+    }
+    return 0;
 
     // Test loadObjFile()
     std::vector<double> vertices;
     std::vector<std::vector<int>> polygons;
-    loadObjFile(FILENAME, vertices, polygons);
+    readObjFile(FILENAME, vertices, polygons);
 
     std::cout<<vertices.size()<<std::endl;
     for(auto v : vertices)
@@ -28,32 +32,10 @@ int main(){
         std::cout<<std::endl;
     }
 
+    // Test tetgen()
     tetgen("redundant_unit_cube", vertices, polygons);
     
-    // objl::Loader loader;
-    // loader.LoadFile(FILENAME);
 
-    // for(auto v: loader.LoadedVertices) {
-    //     std::cout << v.Position.X << "   " << v.Position.Y << "   " << v.Position.Z << std::endl;
-    // }
-    
-    // for(auto m: loader.LoadedMeshes) {
-    //     std::cout << "mesh" << std::endl;
-    //     for(auto vi: m.Indices) {
-    //         auto v = loader.LoadedVertices[vi];
-    //         std::cout << "   " << v.Position.X << "   " << v.Position.Y << "   " << v.Position.Z << std::endl;
-    //     }
-    //     for(auto i: m.Indices) {
-    //         std::cout << i << std::endl;
-    //     }
-    // }
-
-    // std::cout << "===" << std::endl;
-
-    // for(auto i: loader.LoadedIndices) {
-    //     std::cout << i << std::endl;
-    // }
-   
 
     return 0;
 }

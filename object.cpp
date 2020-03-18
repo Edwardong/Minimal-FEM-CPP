@@ -10,6 +10,8 @@ int serialize(int x, int y, int z){
     return x*(SIZE + 1)*(SIZE + 1) + y*(SIZE + 1) + z;
 }
 
+
+// Jim's function that loads a single cube. Same as in Python.
 void load_obj(std::vector<Eigen::Vector3d> &nodes, std::vector<Eigen::Vector4i> &tetras){
 
     // init nodes
@@ -41,3 +43,20 @@ void load_obj(std::vector<Eigen::Vector3d> &nodes, std::vector<Eigen::Vector4i> 
     }
 
 }
+
+
+void Object::initVelocitiesToZero() {
+    for(int i = 0; i < nodes.size(); i++) {
+        velocities.push_back(Eigen::Vector3d(0,0,0));
+    }
+}
+
+void Object::translate(Eigen::Vector3d displacement) {
+    // TODO
+}
+
+
+
+
+
+
