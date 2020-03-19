@@ -82,3 +82,15 @@ double Object::volumn() {
     return volumn;
 }
 
+std::ostream& operator<<(std::ostream& os, const Object& obj) {
+    os  << obj.nodes.size() << " nodes, " 
+        << obj.tetras.size() << " tetras." << std::endl;
+    // for(auto n : obj.nodes) {
+    //     os << "( " << n[0] << " " << n[1] << " " << n[2] << " )" << std::endl;
+    // }
+    // for(auto t : obj.tetras) {
+    //     os << "< " << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << " >" << std::endl;
+    // }
+    return os;
+}
+

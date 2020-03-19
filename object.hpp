@@ -1,8 +1,9 @@
 #ifndef OBJECT_HPP
 #define OBJECT_HPP
 
-#include <vector>
 #include <eigen3/Eigen/Eigen>
+#include <vector>
+#include <iostream>
 
 #define SIZE 10
 
@@ -24,7 +25,11 @@ class Object {
     void translate(Eigen::Vector3d displacement);
     // Total volumn of the object
     double volumn();
+
+    // Print Object
+    friend std::ostream& operator<<(std::ostream& os, const Object& obj);
 };
+
 
 // Jim's function that loads a single cube of SIZE.
 Object load_obj();
