@@ -1,4 +1,5 @@
 #include "object.hpp"
+#include <iostream>
 
 std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
     std::vector<Eigen::Vector3d> result;
@@ -10,9 +11,11 @@ int serialize(int x, int y, int z){
     return x*(SIZE + 1)*(SIZE + 1) + y*(SIZE + 1) + z;
 }
 
+// Jim's function that loads a single cube.
+Object load_obj(){
 
-// Jim's function that loads a single cube. Same as in Python.
-void load_obj(std::vector<Eigen::Vector3d> &nodes, std::vector<Eigen::Vector4i> &tetras){
+    std::vector<Eigen::Vector3d> nodes;
+    std::vector<Eigen::Vector4i> tetras;
 
     // init nodes
     for( size_t x = 0; x <= SIZE; x++)
@@ -42,8 +45,18 @@ void load_obj(std::vector<Eigen::Vector3d> &nodes, std::vector<Eigen::Vector4i> 
         }
     }
 
+    return Object(nodes, tetras);
 }
 
+
+
+Object::Object(){}
+
+Object::Object(std::vector<Eigen::Vector3d> nodes, std::vector<Eigen::Vector4i> tetras) {
+    this->nodes = nodes;
+    this->tetras = tetras;
+    initVelocitiesToZero();
+}
 
 void Object::initVelocitiesToZero() {
     for(int i = 0; i < nodes.size(); i++) {
@@ -52,11 +65,20 @@ void Object::initVelocitiesToZero() {
 }
 
 void Object::translate(Eigen::Vector3d displacement) {
-    // TODO
+    for(auto n: nodes) {
+        n += displacement;
+    }
 }
 
-
-
-
-
+double Object::volumn() {
+    double volumn = 0;
+    for(auto t : tetras) {
+        Eigen::Vector3d a = nodes[t[0]];
+        Eigen::Vector3d b = nodes[t[1]];
+        Eigen::Vector3d c = nodes[t[2]];
+        Eigen::Vector3d d = nodes[t[3]];
+        volumn += abs((b-a).dot((c-a).cross(d-a))) / 6;
+    }
+    return volumn;
+}
 
