@@ -1,4 +1,5 @@
 #include "object.hpp"
+#include <iostream>
 
 std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
     std::vector<Eigen::Vector3d> result;
@@ -10,7 +11,11 @@ int serialize(int x, int y, int z){
     return x*(SIZE + 1)*(SIZE + 1) + y*(SIZE + 1) + z;
 }
 
-void load_obj(std::vector<Eigen::Vector3d> &nodes, std::vector<Eigen::Vector4i> &tetras){
+// Jim's function that loads a single cube.
+Object load_obj(){
+
+    std::vector<Eigen::Vector3d> nodes;
+    std::vector<Eigen::Vector4i> tetras;
 
     // init nodes
     for( size_t x = 0; x <= SIZE; x++)
@@ -40,7 +45,55 @@ void load_obj(std::vector<Eigen::Vector3d> &nodes, std::vector<Eigen::Vector4i> 
         }
     }
 
+    return Object(nodes, tetras);
 }
+
+
+
+Object::Object(){}
+
+Object::Object(std::vector<Eigen::Vector3d> nodes, std::vector<Eigen::Vector4i> tetras) {
+    this->nodes = nodes;
+    this->tetras = tetras;
+    initVelocitiesToZero();
+}
+
+void Object::initVelocitiesToZero() {
+    for(int i = 0; i < nodes.size(); i++) {
+        velocities.push_back(Eigen::Vector3d(0,0,0));
+    }
+}
+
+void Object::translate(Eigen::Vector3d displacement) {
+    for(auto n: nodes) {
+        n += displacement;
+    }
+}
+
+double Object::volumn() {
+    double volumn = 0;
+    for(auto t : tetras) {
+        Eigen::Vector3d a = nodes[t[0]];
+        Eigen::Vector3d b = nodes[t[1]];
+        Eigen::Vector3d c = nodes[t[2]];
+        Eigen::Vector3d d = nodes[t[3]];
+        volumn += abs((b-a).dot((c-a).cross(d-a))) / 6;
+    }
+    return volumn;
+}
+
+std::ostream& operator<<(std::ostream& os, const Object& obj) {
+    os  << obj.nodes.size() << " nodes, " 
+        << obj.tetras.size() << " tetras." << std::endl;
+    // for(auto n : obj.nodes) {
+    //     os << "( " << n[0] << " " << n[1] << " " << n[2] << " )" << std::endl;
+    // }
+    // for(auto t : obj.tetras) {
+    //     os << "< " << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << " >" << std::endl;
+    // }
+    return os;
+}
+
 
 void export_obj(std::vector<Eigen::Vector3d> def_X, std::vector<Eigen::Vector4i> T, int index){
     // 1. create file.

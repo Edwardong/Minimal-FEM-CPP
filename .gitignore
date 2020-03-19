@@ -33,3 +33,7 @@
 
 .vscode/
 .DS_Store
+
+main
+*.py
+test_*.out

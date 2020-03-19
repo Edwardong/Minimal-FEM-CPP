@@ -15,7 +15,7 @@ int main(){
     load_obj(ref_X, tetra);
     // do I need shape?
     std::cout << ref_X.size() << " nodes." << std::endl;
-    std::cout << tetra.size() << " tetrahedral." << std::endl;
+    std::cout << tetra.size() << " tetrahedrals." << std::endl;
 
     def_X = deform(ref_X);      // compute deformed X
 
@@ -36,10 +36,8 @@ int main(){
         F = update_XV(def_X, tetra, V, B, W);
 
         // compute forces for debug
-        for (auto f : tetra) std::cout << i << " computed tetra:\n" << f << std::endl;
-
-
-        export_obj(def_X, tetra, i);
+        // for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
+        
     }
 
     return 0;
