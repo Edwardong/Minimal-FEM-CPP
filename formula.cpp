@@ -34,11 +34,11 @@ std::vector<Eigen::Vector3d> compute_F( std::vector<Eigen::Vector3d> def_X,
     //TO-Check
     //std::vector<Eigen::Vector3d> f(def_X.size(), Eigen::Vector3d(0,0,0));
     std::vector<Eigen::Vector3d> f;
-    for(int i =0; i < def_X.size(); i++){
+    for(size_t i =0; i < def_X.size(); i++){
         Eigen::Vector3d temp(0,0,0);
         f.push_back(temp);
     }
-    for(int m = 0; m <T.size(); m++){
+    for(size_t m = 0; m <T.size(); m++){
         Eigen::Vector3d i = def_X[T[m][0]];
         Eigen::Vector3d j = def_X[T[m][1]];
         Eigen::Vector3d k = def_X[T[m][2]];
@@ -78,12 +78,12 @@ std::vector<Eigen::Vector3d> compute_dF(std::vector<Eigen::Vector3d> def_X,
     //TO-Check
     //std::vector<Eigen::Vector3d> f(def_X.size(), Eigen::Vector3d(0,0,0));
     std::vector<Eigen::Vector3d> df;
-    for(int i =0; i < def_X.size(); i++){
+    for(size_t i =0; i < def_X.size(); i++){
         Eigen::Vector3d temp(0,0,0);
         df.push_back(temp);
     }
 
-    for(int m = 0; m <T.size(); m++){
+    for(size_t m = 0; m <T.size(); m++){
         Eigen::Vector3d i = def_X[T[m][0]];
         Eigen::Vector3d j = def_X[T[m][1]];
         Eigen::Vector3d k = def_X[T[m][2]];
@@ -123,12 +123,12 @@ std::vector<Eigen::Vector3d> update_XV( std::vector<Eigen::Vector3d> &def_X,
     std::vector<Eigen::Vector3d> Fe = compute_F(def_X, T, B, W);
     std::vector<Eigen::Vector3d> Fd = compute_dF(def_X, V, T, B, W);
     std::vector<Eigen::Vector3d> F;
-    for (int i =0; i < Fd.size(); i++){
+    for (size_t i =0; i < Fd.size(); i++){
         Fd[i] *= (-1) * GAMMA;
         F.push_back(Fe[i] + Fd[i]);
     }
     
-    for (int j = 0; j < def_X.size(); j++){
+    for (size_t j = 0; j < def_X.size(); j++){
         V[j] += DELTA_TIME * F[j] / MASS;
         def_X[j] += DELTA_TIME * V[j];
     }

@@ -1,20 +1,37 @@
 gxx = g++
-VERSION_FLAG = -std=c++11
-objects =  object.o formula.o
 
-all: FEM
+CXXFLAGS = -g -ggdb
 
-# main: ${DEPENDENCIES}
-# 	${gxx} $^ -o $@
+TETGEN_DIR = include/tetgen
 
-FEM:main.cpp $(objects)
-	${gxx} ${VERSION_FLAG} -Wall main.cpp $(objects) -o FEM
+tetgen = ${TETGEN_DIR}/libtet.a
 
-object.o: object.cpp
-	${gxx} -c ${VERSION_FLAG} -Wall object.cpp -o object.o
+DEPENDENCIES = loader.o object.o formula.o main.o ${tetgen} # scene.o
 
-formula.o: formula.cpp
-	${gxx} -c ${VERSION_FLAG} -Wall formula.cpp -o formula.o
+
+all: main
+
+main: ${DEPENDENCIES}
+	${gxx} $^ -o $@
+	./main
+	# rm *.o main 
+
+# %.o: %.cpp %.hpp
+# 	gcc -o $@ $<
+
+${tetgen}:
+	cd ${TETGEN_DIR} && make tetlib 
+
+test_loader: test_loader.o loader.o ${tetgen}
+	${gxx} ${CXXFLAGS} $^ -o $@.out
+	./$@.out
+
+test_object: test_object.o object.o loader.o ${tetgen}
+	${gxx} ${CXXFLAGS} $^ -o $@.out
+	./$@.out
+
+# test_scene: test_scene.o scene.o object.o
+# 	${gxx} ${CXXFLAGS} $^ -o $@.out
 
 clean:
-	rm FEM $(objects)
+	rm *.o *.out main ${TETGEN_DIR}/*.a ${TETGEN_DIR}/*.o
