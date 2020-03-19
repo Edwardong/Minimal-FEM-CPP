@@ -28,4 +28,5 @@ test_object: test_object.o object.o
 	./$@.out
 
 clean:
-	rm *.o *.out main include/tetgen/*.a include/tetgen/*.o
+	rm -rf out *.o main 
+	# rm *.o *.out main include/tetgen/*.a include/tetgen/*.o

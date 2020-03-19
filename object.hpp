@@ -4,6 +4,8 @@
 #include <eigen3/Eigen/Eigen>
 #include <vector>
 #include <iostream>
+#include <fstream>
+#include "formula.hpp"
 
 #define SIZE 10
 
@@ -15,10 +17,16 @@ class Object {
     std::vector<Eigen::Vector3d> nodes;
     std::vector<Eigen::Vector4i> tetras;
     std::vector<Eigen::Vector3d> velocities;
+    std::vector<Eigen::Matrix3d> B;
+    std::vector<double> W;
     
     Object();
     Object(std::vector<Eigen::Vector3d> nodes, std::vector<Eigen::Vector4i> tetras);
 
+    // PreCompute B and W
+    void preCompute();
+    // Compute Velocities.
+    void computeVelocity();
     // Initialize velocities to zeros after setting nodes
     void initVelocitiesToZero();
     // Translate all nodes for a 'displacement'
@@ -26,7 +34,7 @@ class Object {
     // Total volumn of the object
     double volumn();
     // Export as object file
-    void export_obj(std::vector<Eigen::Vector3d> def_X, std::vector<Eigen::Vector4i> T, int index);
+    void export_obj(int index);
 
     // Print Object
     friend std::ostream& operator<<(std::ostream& os, const Object& obj);
