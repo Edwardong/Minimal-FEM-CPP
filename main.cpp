@@ -28,11 +28,18 @@ int main(){
 
     // init all velocities to 0
 
+    // make a directory "out" to store object files.
+    if (mkdir("out", 0777) == -1) std::cerr << "Error :  " << strerror(errno) << std::endl; 
+    else std::cout << "Directory created\n"; 
+
     for (size_t i = 1; i <= N_STEPS; i++){
         F = update_XV(def_X, tetra, V, B, W);
 
         // compute forces for debug
-        for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
+        for (auto f : tetra) std::cout << i << " computed tetra:\n" << f << std::endl;
+
+
+        export_obj(def_X, tetra, i);
     }
 
     return 0;

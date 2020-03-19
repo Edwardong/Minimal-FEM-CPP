@@ -41,3 +41,26 @@ void load_obj(std::vector<Eigen::Vector3d> &nodes, std::vector<Eigen::Vector4i> 
     }
 
 }
+
+
+void export_obj(std::vector<Eigen::Vector3d> def_X, std::vector<Eigen::Vector4i> T, int index){
+    // 1. create file.
+    std::ofstream myfile;
+    std::string name = "out/out_" + std::to_string(index) + ".obj";
+    myfile.open(name);
+
+    // 2. write to file.
+    // // 2.1 write vertex info 
+    myfile << "g default\n";
+    for(auto vertex : def_X){
+    std::string v = "v ";
+        v += std::to_string(vertex[0]) + " " + std::to_string(vertex[1]) + " " + std::to_string(vertex[2]) + "\n";
+        myfile << v;
+    }
+    // // 2.2 write tetrahedral faces
+    for(auto tetra : T){
+        
+    }
+    // 3. close the file.
+    myfile.close();
+}

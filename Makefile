@@ -17,4 +17,4 @@ formula.o: formula.cpp
 	${gxx} -c ${VERSION_FLAG} -Wall formula.cpp -o formula.o
 
 clean:
-	rm FEM $(objects)
+	rm -rf FEM $(objects) out
