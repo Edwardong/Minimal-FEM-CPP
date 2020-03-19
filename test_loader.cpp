@@ -1,14 +1,14 @@
 #include "loader.hpp"
 #include <iostream>
 
-const char* FILENAME = "models/redundant_unit_cube.obj";
 
 
 int main(){
+    const std::string FILENAME = "models/redundant_unit_cube.obj";
     // load(FILENAME);
     // return 0;
     
-    // Test loadObjFile()
+    // Test readObjFile()
     std::vector<double> vertices;
     std::vector<std::vector<int>> polygons;
     readObjFile(FILENAME, vertices, polygons);

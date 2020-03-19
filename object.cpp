@@ -1,4 +1,6 @@
 #include "object.hpp"
+#include "loader.hpp"
+#include <iostream>
 
 std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
     std::vector<Eigen::Vector3d> result;
@@ -57,14 +59,6 @@ Object::Object(std::vector<Eigen::Vector3d> nodes, std::vector<Eigen::Vector4i> 
     initVelocitiesToZero();
 }
 
-void Object::preCompute(){
-    precompute(nodes, tetras, B, W);
-}
-
-void Object::computeVelocity(std::vector<Eigen::Vector3d> &def_X){
-    update_XV()
-}
-
 void Object::initVelocitiesToZero() {
     for(int i = 0; i < nodes.size(); i++) {
         velocities.push_back(Eigen::Vector3d(0,0,0));
@@ -101,6 +95,16 @@ std::ostream& operator<<(std::ostream& os, const Object& obj) {
     return os;
 }
 
+
+Object load(std::string filename) {
+    std::vector<double> vertices;
+    std::vector<std::vector<int>> polygons;
+    readObjFile(filename, vertices, polygons);
+    std::vector<Eigen::Vector3d> nodes;
+    std::vector<Eigen::Vector4i> tetras;
+    tetrahedralize(vertices, polygons, nodes, tetras);
+    return Object(nodes, tetras);
+}
 
 void Object::export_obj(int index){
     // 1. create file.

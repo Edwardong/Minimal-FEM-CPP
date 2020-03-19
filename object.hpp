@@ -4,8 +4,6 @@
 #include <eigen3/Eigen/Eigen>
 #include <vector>
 #include <iostream>
-#include <fstream>
-#include "formula.hpp"
 
 #define SIZE 10
 
@@ -17,16 +15,10 @@ class Object {
     std::vector<Eigen::Vector3d> nodes;
     std::vector<Eigen::Vector4i> tetras;
     std::vector<Eigen::Vector3d> velocities;
-    std::vector<Eigen::Matrix3d> B;
-    std::vector<double> W;
     
     Object();
     Object(std::vector<Eigen::Vector3d> nodes, std::vector<Eigen::Vector4i> tetras);
 
-    // PreCompute B and W
-    void preCompute();
-    // Compute Velocities.
-    void computeVelocity();
     // Initialize velocities to zeros after setting nodes
     void initVelocitiesToZero();
     // Translate all nodes for a 'displacement'
@@ -44,7 +36,8 @@ class Object {
 // Jim's function that loads a single cube of SIZE.
 Object load_obj();
 
-
+// The ultimately simplified loading function
+Object load(std::string filename);
 
 #endif // OBJECT_HPP
 
