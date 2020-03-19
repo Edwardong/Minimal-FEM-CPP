@@ -2,9 +2,11 @@ gxx = g++
 
 CXXFLAGS = -g -ggdb
 
-DEPENDENCIES =  object.o formula.o main.o
+DEPENDENCIES = loader.o scene.o object.o formula.o main.o
 
 TETGEN_DIR = include/tetgen
+
+tetgen = ${TETGEN_DIR}/libtet.a
 
 all: main
 
@@ -16,16 +18,19 @@ main: ${DEPENDENCIES}
 # %.o: %.cpp %.hpp
 # 	gcc -o $@ $<
 
-tetgen: 
+${tetgen}:
 	cd ${TETGEN_DIR} && make tetlib 
 
-test_loader: test_loader.o loader.o tetgen
-	${gxx} ${CXXFLAGS} test_loader.o loader.o ${TETGEN_DIR}/libtet.a -o $@.out
-	./$@.out
-
-test_object: test_object.o object.o
+test_loader: test_loader.o loader.o ${tetgen}
 	${gxx} ${CXXFLAGS} $^ -o $@.out
 	./$@.out
 
+test_object: test_object.o object.o loader.o ${tetgen}
+	${gxx} ${CXXFLAGS} $^ -o $@.out
+	./$@.out
+
+test_scene: test_scene.o scene.o object.o
+	${gxx} ${CXXFLAGS} $^ -o $@.out
+
 clean:
-	rm *.o *.out main include/tetgen/*.a include/tetgen/*.o
+	rm *.o *.out main ${TETGEN_DIR}/*.a ${TETGEN_DIR}/*.o
