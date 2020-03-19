@@ -36,5 +36,4 @@
 
 main
 *.py
-tmp_*
 test_*.out

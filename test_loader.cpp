@@ -1,19 +1,13 @@
-
 #include "loader.hpp"
-// #include "include/OBJ_Loader/OBJ_Loader.h"
 #include <iostream>
 
 const char* FILENAME = "models/redundant_unit_cube.obj";
 
 
 int main(){
-
-    auto obj = readTetgenFile("tmp_redundant_unit_cube");
-    for(auto i : obj.nodes) {
-        std::cout<<i<<std::endl<<std::endl;
-    }
-    return 0;
-
+    // load(FILENAME);
+    // return 0;
+    
     // Test loadObjFile()
     std::vector<double> vertices;
     std::vector<std::vector<int>> polygons;
@@ -32,10 +26,12 @@ int main(){
         std::cout<<std::endl;
     }
 
-    // Test tetgen()
-    tetgen("redundant_unit_cube", vertices, polygons);
-    
+    std::vector<Eigen::Vector3d> nodes;
+    std::vector<Eigen::Vector4i> tetras;
+    tetrahedralize(vertices, polygons, nodes, tetras);
 
+    std::cout<<"nodes.size() = "<<nodes.size()<<std::endl;
+    std::cout<<"tetras.size() = "<<tetras.size()<<std::endl;
 
     return 0;
 }

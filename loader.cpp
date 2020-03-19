@@ -46,14 +46,16 @@ std::string cleanCut(std::string& s, char a) {
 void readObjFile(const char* filename, std::vector<double>& vertices, std::vector<std::vector<int>>& polygons) {
 
     std::ifstream file(filename);
-    if(file.bad()) return;
+    if(!file.good()) return;
     while(!file.eof()) {
         std::string line;
         getline(file, line);
 
+        // extract this line's datatype
         std::string datatype = cutAt(line, ' ');
         clean(line, ' ');
-        // vertice 
+
+        // vertice "v "
         if(datatype.length() >= 2 && datatype[0] == 'v' && datatype[1] == ' ') {
             for(int i = 0; i < 3; i++) {
                 std::string v = cleanCut(line, ' ');
@@ -61,12 +63,12 @@ void readObjFile(const char* filename, std::vector<double>& vertices, std::vecto
             }
         }
 
-        // polygon
-        // format: v | v/vn | v/vn/vt
+        // polygon "f "
+        // format: v | v/vt | v/vt/vn
         if(datatype.length() >= 2 && datatype[0] == 'f' && datatype[1] == ' ') {
             std::vector<int> polygon;
             while(!line.empty()) {
-                std::string vTuple = cleanCut(line, ' ');
+                std::string vTuple = cleanCut(line, ' '); // vTuple looks like "1/0/1"
                 std::string v = cutAt(vTuple, '/');
                 v.pop_back();
                 polygon.push_back(std::stoi(v));
@@ -74,28 +76,28 @@ void readObjFile(const char* filename, std::vector<double>& vertices, std::vecto
             polygons.push_back(polygon);
         }
     }
+
     file.close();
-    std::cout<<"loadObjFile: "<<vertices.size()<<" vertices, "<<polygons.size()<<" polygons."<<std::endl;
+    std::cout << "loadObjFile: " << vertices.size() << " vertices, " << polygons.size() << " polygons." << std::endl;
 }
 
-void tetgen(char* filename, std::vector<double> vertices, std::vector<std::vector<int>> polygons) {
+
+void tetrahedralize(std::vector<double> vertices, std::vector<std::vector<int>> polygons, std::vector<Eigen::Vector3d>& nodes, std::vector<Eigen::Vector4i>& tetras) {
 
     tetgenio in, out;
-    in.firstnumber = 1;
+
+    // Prepare input for tetgen
     // nodes
     in.numberofpoints = vertices.size() / 3;
-    // in.pointlist = vertices.data(); // tetgen REAL == double
     in.pointlist = new REAL[vertices.size()];
-    // std::copy(vertices.begin(), vertices.end(), in.pointlist);
     for(int i = 0; i < vertices.size(); i++) {
         in.pointlist[i] = vertices[i];
     }
 
-
     // faces
+    in.firstnumber = 0; // node index starts from 0
     in.numberoffacets = polygons.size();
     in.facetlist = new tetgenio::facet[in.numberoffacets];
-
     for(int i = 0; i < polygons.size(); i++) {
         std::vector<int> polygon = polygons[i];
         tetgenio::facet* f = &(in.facetlist[i]);
@@ -107,14 +109,14 @@ void tetgen(char* filename, std::vector<double> vertices, std::vector<std::vecto
         p->numberofvertices = polygon.size();
         p->vertexlist = new int[p->numberofvertices];
         for(int j = 0; j < p->numberofvertices; j++) {
-            p->vertexlist[j] = polygon[j];
+            p->vertexlist[j] = polygon[j] - 1; // -1 because .obj file starts from 1
         }
     }
 
+    // Output for debugging 
     // for(int i = 0 ; i < in.numberoffacets; i++) {
     //     tetgenio::facet* f = &(in.facetlist[i]);
     //     tetgenio::polygon* p = &f->polygonlist[0];
-        
     //     for(int j = 0 ; j < p->numberofvertices; j++) {
     //         int index = p->vertexlist[j] - 1;
     //         std::cout<<'('<<in.pointlist[index*3]<<' '<<in.pointlist[index*3+1]<<' '<<in.pointlist[index*3+2]<<')';
@@ -122,28 +124,37 @@ void tetgen(char* filename, std::vector<double> vertices, std::vector<std::vecto
     //     std::cout<<std::endl;
     // }
 
+    // facetmarkerlist. unimportant
     in.facetmarkerlist = new int[in.numberoffacets];
     for(int i = 0; i < in.numberoffacets; i++)
         in.facetmarkerlist[i] = 0;
-
-    // Output the PLC to files 'barin.node' and 'barin.poly'.
-    // in.save_nodes(filename);
-    // in.save_poly(filename);
 
     // Tetrahedralize the PLC. Switches are chosen to read a PLC (p),
     //   do quality mesh generation (q) with a specified quality bound
     //   (1.414), and apply a maximum volume constraint (a0.1).
     tetrahedralize("pq1.414a0.1k", &in, &out);
 
-    std::string outputFilenameString = std::string("tmp_") + std::string(filename);
-    char* outputFilename = new char[outputFilenameString.size() + 1];
-    outputFilenameString.copy(outputFilename, outputFilenameString.size() + 1);
-    out.save_nodes(outputFilename);
-    out.save_elements(outputFilename);
-    // out.save_faces(outputFilename);
+    // Create nodes and tetras from out
+    for(int i = 0; i < out.numberofpoints; i++) {
+        double x = out.pointlist[i*3];
+        double y = out.pointlist[i*3+1];
+        double z = out.pointlist[i*3+2];
+        Eigen::Vector3d n(x,y,z);
+        nodes.push_back(n);
+    }
+    for(int i = 0; i < out.numberoftetrahedra; i++) {
+        int x = out.tetrahedronlist[i*3];
+        int y = out.tetrahedronlist[i*3+1];
+        int z = out.tetrahedronlist[i*3+2];
+        int w = out.tetrahedronlist[i*3+3];
+        Eigen::Vector4i t(x,y,z,w);
+        tetras.push_back(t);
+    }
 
 }
 
+// deprecated
+/*
 Object readTetgenFile(char* filename) {
     Object obj;
 
@@ -188,17 +199,4 @@ Object readTetgenFile(char* filename) {
 
     return obj;
 }
-
-
-
-
-bool load(std::vector<Object>* X, const char* filename) {
-
-    
-    std::vector<double> vertices;
-    std::vector<std::vector<int>> polygons;
-    loadObjFile(filename, vertices, polygons);
-
-
-}
-
+*/
