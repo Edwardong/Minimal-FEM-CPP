@@ -2,11 +2,12 @@ gxx = g++
 
 CXXFLAGS = -g -ggdb
 
-DEPENDENCIES = loader.o object.o formula.o main.o # scene.o
-
 TETGEN_DIR = include/tetgen
 
 tetgen = ${TETGEN_DIR}/libtet.a
+
+DEPENDENCIES = loader.o object.o formula.o main.o ${tetgen} # scene.o
+
 
 all: main
 
