@@ -1,4 +1,5 @@
 #include "object.hpp"
+#include "loader.hpp"
 #include <iostream>
 
 std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
@@ -92,5 +93,16 @@ std::ostream& operator<<(std::ostream& os, const Object& obj) {
     //     os << "< " << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << " >" << std::endl;
     // }
     return os;
+}
+
+
+Object load(std::string filename) {
+    std::vector<double> vertices;
+    std::vector<std::vector<int>> polygons;
+    readObjFile(filename, vertices, polygons);
+    std::vector<Eigen::Vector3d> nodes;
+    std::vector<Eigen::Vector4i> tetras;
+    tetrahedralize(vertices, polygons, nodes, tetras);
+    return Object(nodes, tetras);
 }
 

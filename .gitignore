@@ -36,3 +36,4 @@
 main
 *.py
 test_*.out
+tetgen_tmp.*

@@ -43,7 +43,7 @@ std::string cleanCut(std::string& s, char a) {
     return sCopy;
 }
 
-void readObjFile(const char* filename, std::vector<double>& vertices, std::vector<std::vector<int>>& polygons) {
+void readObjFile(const std::string filename, std::vector<double>& vertices, std::vector<std::vector<int>>& polygons) {
 
     std::ifstream file(filename);
     if(!file.good()) return;
@@ -69,8 +69,7 @@ void readObjFile(const char* filename, std::vector<double>& vertices, std::vecto
             std::vector<int> polygon;
             while(!line.empty()) {
                 std::string vTuple = cleanCut(line, ' '); // vTuple looks like "1/0/1"
-                std::string v = cutAt(vTuple, '/');
-                v.pop_back();
+                std::string v = cleanCut(vTuple, '/');
                 polygon.push_back(std::stoi(v));
             }
             polygons.push_back(polygon);
@@ -78,7 +77,7 @@ void readObjFile(const char* filename, std::vector<double>& vertices, std::vecto
     }
 
     file.close();
-    std::cout << "loadObjFile: " << vertices.size() << " vertices, " << polygons.size() << " polygons." << std::endl;
+    std::cout << "readObjFile: " << vertices.size() << " vertices, " << polygons.size() << " polygons." << std::endl;
 }
 
 
@@ -113,7 +112,7 @@ void tetrahedralize(std::vector<double> vertices, std::vector<std::vector<int>> 
         }
     }
 
-    // Output for debugging 
+    // Print for debugging 
     // for(int i = 0 ; i < in.numberoffacets; i++) {
     //     tetgenio::facet* f = &(in.facetlist[i]);
     //     tetgenio::polygon* p = &f->polygonlist[0];
@@ -132,7 +131,12 @@ void tetrahedralize(std::vector<double> vertices, std::vector<std::vector<int>> 
     // Tetrahedralize the PLC. Switches are chosen to read a PLC (p),
     //   do quality mesh generation (q) with a specified quality bound
     //   (1.414), and apply a maximum volume constraint (a0.1).
-    tetrahedralize("pq1.414a0.1k", &in, &out);
+    tetrahedralize("pq2a0.01O/7", &in, &out);
+
+    // Output files for debugging
+    // out.save_nodes("tetgen_tmp");
+    // out.save_faces("tetgen_tmp");
+    // out.save_edges("tetgen_tmp");
 
     // Create nodes and tetras from out
     for(int i = 0; i < out.numberofpoints; i++) {
@@ -143,10 +147,10 @@ void tetrahedralize(std::vector<double> vertices, std::vector<std::vector<int>> 
         nodes.push_back(n);
     }
     for(int i = 0; i < out.numberoftetrahedra; i++) {
-        int x = out.tetrahedronlist[i*3];
-        int y = out.tetrahedronlist[i*3+1];
-        int z = out.tetrahedronlist[i*3+2];
-        int w = out.tetrahedronlist[i*3+3];
+        int x = out.tetrahedronlist[i*4];
+        int y = out.tetrahedronlist[i*4+1];
+        int z = out.tetrahedronlist[i*4+2];
+        int w = out.tetrahedronlist[i*4+3];
         Eigen::Vector4i t(x,y,z,w);
         tetras.push_back(t);
     }

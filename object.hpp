@@ -34,7 +34,8 @@ class Object {
 // Jim's function that loads a single cube of SIZE.
 Object load_obj();
 
-
+// The ultimately simplified loading function
+Object load(std::string filename);
 
 #endif // OBJECT_HPP
 
