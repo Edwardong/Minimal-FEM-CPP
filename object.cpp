@@ -115,7 +115,7 @@ void Object::export_obj(int index){
     // 2. write to file.
     // // 2.1 write vertex info 
     myfile << "g default\n";
-    for(auto vertex : deformNodes){
+    for(auto vertex : nodes){
         std::string v = "v ";
         v += std::to_string(vertex[0]) + " " + std::to_string(vertex[1]) + " " + std::to_string(vertex[2]) + "\n";
         myfile << v;

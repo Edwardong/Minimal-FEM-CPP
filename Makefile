@@ -2,7 +2,7 @@ gxx = g++
 
 CXXFLAGS = -g -ggdb
 
-DEPENDENCIES = loader.o scene.o object.o formula.o main.o
+DEPENDENCIES = loader.o object.o formula.o main.o # scene.o
 
 TETGEN_DIR = include/tetgen
 
@@ -29,8 +29,8 @@ test_object: test_object.o object.o loader.o ${tetgen}
 	${gxx} ${CXXFLAGS} $^ -o $@.out
 	./$@.out
 
-test_scene: test_scene.o scene.o object.o
-	${gxx} ${CXXFLAGS} $^ -o $@.out
+# test_scene: test_scene.o scene.o object.o
+# 	${gxx} ${CXXFLAGS} $^ -o $@.out
 
 clean:
 	rm *.o *.out main ${TETGEN_DIR}/*.a ${TETGEN_DIR}/*.o

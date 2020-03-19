@@ -4,6 +4,7 @@
 #include <eigen3/Eigen/Eigen>
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 #define SIZE 10
 
