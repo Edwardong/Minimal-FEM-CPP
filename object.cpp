@@ -42,7 +42,6 @@ void load_obj(std::vector<Eigen::Vector3d> &nodes, std::vector<Eigen::Vector4i> 
 
 }
 
-
 void export_obj(std::vector<Eigen::Vector3d> def_X, std::vector<Eigen::Vector4i> T, int index){
     // 1. create file.
     std::ofstream myfile;
