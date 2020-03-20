@@ -4,6 +4,8 @@
 #include <eigen3/Eigen/Eigen>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/stat.h> 
+#include <sys/types.h>
 
 #define N_STEPS 400 // number of iterations
 #define stepPerFrame 4
@@ -44,9 +46,16 @@ int main(){
     std::vector<Eigen::Matrix3d> B;
     std::vector<double> W;
 
+    // make a directory "out" to store object files.
+    if (mkdir("out", 0777) == -1) 
+        std::cerr << "Error :  " << strerror(errno) << std::endl; 
+    else 
+        std::cout << "Directory created\n"; 
+
+
     // 1. load *.obj to Object obj.
     Object obj = load("models/redundant_unit_cube.obj");
-    std::cout<< "Finished loading the second." <<std::endl;
+    //std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
     def_X = gravity(obj, stepPerFrame); // deform(obj.nodes);
@@ -64,7 +73,8 @@ int main(){
         // for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
         if(i % stepPerFrame == 0){
             // 4. Export to *.obj
-            obj.export_obj(count);
+            obj.export_obj(count, "out");
+            std::cout<<"exported the " << count << "-th obj" <<std::endl;
             count++;
         }
         obj.nodes = def_X;

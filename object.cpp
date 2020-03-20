@@ -107,10 +107,10 @@ Object load(std::string filename) {
     return Object(nodes, tetras);
 }
 
-void Object::export_obj(int index){
+void Object::export_obj(int index, std::string out_dir){
     // 1. create file.
     std::ofstream myfile;
-    std::string name = "out/out_" + std::to_string(index) + ".obj";
+    std::string name = out_dir + "/out_" + std::to_string(index) + ".obj";
     myfile.open(name);
 
     // 2. write to file.
