@@ -8,11 +8,16 @@
 //using namespace std;
 
 
-#define MU 0.1758
-#define LAMBDA 0.7141
-#define GAMMA 1
+// #define MU 0.1758
+// #define LAMBDA 0.7141
+// #define GAMMA 1
+// #define DELTA_TIME 1
+// #define MASS 100.0
+#define MU 0.1
+#define LAMBDA 0.1
+#define GAMMA 3
 #define DELTA_TIME 1
-#define MASS 100.0
+#define MASS 10.0
 
 //remind
 //input two empty vectors B, W
