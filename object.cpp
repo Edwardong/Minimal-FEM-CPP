@@ -5,7 +5,7 @@
 std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
     // Only one dimension "y" changed.
     std::vector<Eigen::Vector3d> result;
-    for (auto item : ref_X) result.push_back(Eigen::Vector3d(item[0], item[1] * 1.1, item[2]));
+    for (auto item : ref_X) result.push_back(Eigen::Vector3d(item[0], item[1], item[2] * 1.1));
     return result;
 }
 
