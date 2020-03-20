@@ -26,11 +26,12 @@ Eigen::Matrix3d compute_P(Eigen::Matrix3d F){
     return (F * (2*MU*E + LAMBDA*E.trace()*I3));
 }
 
-void negative_V(std::vector<Eigen::Vector3d> &V){
+std::vector<Eigen::Vector3d> negative_V(std::vector<Eigen::Vector3d> V){
+    std::vector<Eigen::Vector3d> nV;
     for(std::vector<Eigen::Vector3d>::iterator it = V.begin(); it != V.end(); ++it)
-        *it = -*it;
+        nV.push_back(-*it);
+    return nV;
 }
-
 
 std::vector<Eigen::Vector3d> compute_F( std::vector<Eigen::Vector3d> def_X,
                                         std::vector<Eigen::Vector4i> T,
@@ -127,17 +128,27 @@ std::vector<Eigen::Vector3d> update_XV( std::vector<Eigen::Vector3d> &def_X,
                                         std::vector<Eigen::Matrix3d> B,
                                         std::vector<double> W){
     std::vector<Eigen::Vector3d> Fe = compute_F(def_X, T, B, W);
-    std::vector<Eigen::Vector3d> Fd = compute_dF(def_X, V, T, B, W);
+    std::vector<Eigen::Vector3d> Fd = compute_dF(def_X, negative_V(V), T, B, W);
     std::vector<Eigen::Vector3d> F;
     for (size_t i =0; i < Fd.size(); i++){
         Fd[i] *= (-1) * GAMMA;
-        F.push_back(Fe[i]);
-        // F.push_back(Fe[i] + Fd[i]);
+        //F.push_back(Fe[i]);
+        F.push_back(Fe[i] + Fd[i]);
     }
     
     for (size_t j = 0; j < def_X.size(); j++){
-        V[j] += DELTA_TIME * F[j] / MASS;
+        Eigen::Vector3d acceleration = F[j] / MASS;
+        acceleration += GRAVITY;
+        // v' = v + dt * F / M
+        V[j] += DELTA_TIME * acceleration;
+        // x' = x + dt * v
         def_X[j] += DELTA_TIME * V[j];
+
+        //ground
+        if (def_X[j][2] < 0){
+            def_X[j][2] = 0;
+            V[j][2] *= -COEF_OF_RESTITUTION;
+        } 
     }
     return Fe;
 }

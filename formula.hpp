@@ -19,6 +19,8 @@
 #define DELTA_TIME 1
 #define MASS 20.0
 #define I3 Eigen::Matrix3d::Identity()
+#define GRAVITY Eigen::Vector3d(0,0,-0.0002)
+#define COEF_OF_RESTITUTION 0
 //remind
 //input two empty vectors B, W
 void precompute(std::vector<Eigen::Vector3d> X,
@@ -48,6 +50,6 @@ std::vector<Eigen::Vector3d> update_XV(std::vector<Eigen::Vector3d>& def_X,
                                         std::vector<Eigen::Matrix3d> B,
                                         std::vector<double> W);
 
-void negative_V(std::vector<Eigen::Vector3d> &V);
+std::vector<Eigen::Vector3d> negative_V(std::vector<Eigen::Vector3d> V);
 
 #endif //FORMULA_HPP

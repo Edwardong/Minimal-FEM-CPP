@@ -7,8 +7,8 @@
 #include <sys/stat.h> 
 #include <sys/types.h>
 
-#define N_STEPS 400 // number of iterations
-#define stepPerFrame 4
+#define N_STEPS 1000 // number of iterations
+#define stepPerFrame 5
 
 int main(){
     //std::vector<Eigen::Vector3d> ref_X, def_X;
@@ -74,7 +74,9 @@ int main(){
         if(i % stepPerFrame == 0){
             // 4. Export to *.obj
             obj.export_obj(count, "out");
-            std::cout<<"exported the " << count << "-th obj" <<std::endl;
+            if (count==1 ||count % 10 == 0){
+                std::cout<<"exported the " << count << "-th obj" <<std::endl;
+            }
             count++;
         }
         obj.nodes = def_X;
