@@ -107,10 +107,10 @@ Object load(std::string filename) {
     return Object(nodes, tetras);
 }
 
-void Object::export_obj(int index){
+void Object::export_obj(int index, std::string out_dir){
     // 1. create file.
     std::ofstream myfile;
-    std::string name = "out/out_" + std::to_string(index) + ".obj";
+    std::string name = out_dir + "/out_" + std::to_string(index) + ".obj";
     myfile.open(name);
 
     // 2. write to file.
@@ -135,17 +135,17 @@ void Object::export_obj(int index){
     myfile.close();
 }
 
-std::vector<Eigen::Vector3d> gravity(Object obj, int t){
-    double g = -1.5;  // assume each node has 1
-    std::vector<Eigen::Vector3d> result, ref_X = obj.nodes, velocities = obj.velocities;
-    // find midpoint
-    Eigen::Vector3d midPoint = Eigen::Vector3d( *(ref_X.end()) - *(ref_X.begin())) / 2.0;
-    double midNorm = midPoint.norm();
+// std::vector<Eigen::Vector3d> gravity(Object obj, int t){
+//     double g = -1.5;  // assume each node has 1
+//     std::vector<Eigen::Vector3d> result, ref_X = obj.nodes, velocities = obj.velocities;
+//     // find midpoint
+//     Eigen::Vector3d midPoint = Eigen::Vector3d( *(ref_X.end()) - *(ref_X.begin())) / 2.0;
+//     double midNorm = midPoint.norm();
 
-    for (auto item : ref_X){
-        result.push_back(Eigen::Vector3d(   item[0],
-                                            item[1] + g*t*t/10 + std::abs(item.norm() - midNorm)/10,
-                                            item[2]));
-    }
-    return result;
-}
+//     for (auto item : ref_X){
+//         result.push_back(Eigen::Vector3d(   item[0],
+//                                             item[1] + g*t*t/10 + std::abs(item.norm() - midNorm)/10,
+//                                             item[2]));
+//     }
+//     return result;
+// }

@@ -37,4 +37,4 @@ main
 *.py
 test_*.out
 tetgen_tmp.*
-out/
+out/*.obj

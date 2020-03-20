@@ -27,7 +27,7 @@ class Object {
     // Total volumn of the object
     double volumn();
     // Export as object file
-    void export_obj(int index);
+    void export_obj(int index, std::string out_dir);
 
     // Print Object
     friend std::ostream& operator<<(std::ostream& os, const Object& obj);
