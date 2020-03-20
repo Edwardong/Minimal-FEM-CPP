@@ -124,10 +124,10 @@ void Object::export_obj(int index){
     myfile << "g tetras\n";
     for(auto tetra : tetras){
         std::string f = "f ";
-        f += std::to_string(1 + tetra[0]) + "\\" + std::to_string(1 + tetra[1]) + "\\" + std::to_string(1 + tetra[2]) + " ";
-        f += std::to_string(1 + tetra[1]) + "\\" + std::to_string(1 + tetra[2]) + "\\" + std::to_string(1 + tetra[3]) + " ";
-        f += std::to_string(1 + tetra[0]) + "\\" + std::to_string(1 + tetra[2]) + "\\" + std::to_string(1 + tetra[3]) + " ";
-        f += std::to_string(1 + tetra[0]) + "\\" + std::to_string(1 + tetra[1]) + "\\" + std::to_string(1 + tetra[3]) + "\n";
+        f += std::to_string(1 + tetra[0]) + "//" + std::to_string(1 + tetra[1]) + "//" + std::to_string(1 + tetra[2]) + " ";
+        f += std::to_string(1 + tetra[1]) + "//" + std::to_string(1 + tetra[2]) + "//" + std::to_string(1 + tetra[3]) + " ";
+        f += std::to_string(1 + tetra[0]) + "//" + std::to_string(1 + tetra[2]) + "//" + std::to_string(1 + tetra[3]) + " ";
+        f += std::to_string(1 + tetra[0]) + "//" + std::to_string(1 + tetra[1]) + "//" + std::to_string(1 + tetra[3]) + "\n";
         myfile << f;
     }
     // 3. close the file.
