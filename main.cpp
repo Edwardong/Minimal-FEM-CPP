@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define N_STEPS 25 // number of iterations
+#define N_STEPS 20 // number of iterations
 
 
 int main(){
@@ -21,10 +21,10 @@ int main(){
     // obj.export_obj(1);
     // std::cout<< "Finished exporting the first." <<std::endl;
 
-    Object obj2 = load("cube2x2x2.obj");
-    std::cout<< "Finished loading the second." <<std::endl;
-    obj2.export_obj(2);
-    std::cout<< "Finished exporting the second." <<std::endl;
+    // Object obj = load("models/redundant_unit_cube.obj");
+    // std::cout<< "Finished loading the second." <<std::endl;
+    // obj2.export_obj(2);
+    // std::cout<< "Finished exporting the second." <<std::endl;
     // obj.preCompute() // compute B and W
     // objects.push_back(obj);
     // // do I need shape?
@@ -40,17 +40,34 @@ int main(){
     //     objects.push_back(newObj);
     // }
 
-    // // make a directory "out" to store object files.
-    // if (mkdir("out", 0777) == -1) std::cerr << "Error :  " << strerror(errno) << std::endl; 
-    // else std::cout << "Directory created\n"; 
+    // 1. load *.obj to Object obj.
+    Object obj = load("models/redundant_unit_cube.obj");
+    std::cout<< "Finished loading the second." <<std::endl;
+    // 2. Init all velocities to zero.
+    obj.initVelocitiesToZero();
 
-    // for (size_t i = 1; i <= N_STEPS; i++){
-    //     F = update_XV(obj.deformNodes, obj.tetras, V, B, W);
+    for (size_t i = 1; i <= N_STEPS; i++){
 
-    //     // compute forces for debug
-    //     // for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
+        std::vector<Eigen::Matrix3d> B;
+        std::vector<double> W;
+        std::vector<Eigen::Vector3d> def_X, F;
+
+        // 1. Deform. Compute def_X.
+        def_X = deform(obj.nodes);
+        // def_X = gravity(obj, 1);
+        // 2. Precompute. Compute B and W.
+        precompute(def_X, obj.tetras, B, W);
+        // 3. Update positions and velocities.
+        F = update_XV(def_X, obj.tetras, obj.velocities, B, W);
         
-    // }
+        // compute forces for debug
+        // for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
+        
+        // 4. Export to *.obj
+        obj.export_obj(i);
+        // 5. next obj.node = deformed Nodes
+        obj.nodes = def_X;
+    }
 
     return 0;
 }

@@ -33,6 +33,7 @@ class Object {
     friend std::ostream& operator<<(std::ostream& os, const Object& obj);
 };
 
+std::vector<Eigen::Vector3d> gravity(Object obj, int t);
 
 // Jim's function that loads a single cube of SIZE.
 Object load_obj();

@@ -125,7 +125,8 @@ std::vector<Eigen::Vector3d> update_XV( std::vector<Eigen::Vector3d> &def_X,
     std::vector<Eigen::Vector3d> F;
     for (size_t i =0; i < Fd.size(); i++){
         Fd[i] *= (-1) * GAMMA;
-        F.push_back(Fe[i] + Fd[i]);
+        F.push_back(Fe[i]);
+        // F.push_back(Fe[i] + Fd[i]);
     }
     
     for (size_t j = 0; j < def_X.size(); j++){

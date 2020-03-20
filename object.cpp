@@ -3,8 +3,20 @@
 #include <iostream>
 
 std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
+    // Only one dimension "y" changed.
     std::vector<Eigen::Vector3d> result;
-    for (auto item : ref_X) result.push_back(Eigen::Vector3d(item[0], item[1], item[2] * 1.5));
+    for (auto item : ref_X) result.push_back(Eigen::Vector3d(item[0], -item[1] * 1.1, item[2]));
+    return result;
+}
+
+std::vector<Eigen::Vector3d> gravity(Object obj, int t){
+    double g = -9.81;  // assume each node has 1
+    std::vector<Eigen::Vector3d> result, ref_X = obj.nodes, velocities = obj.velocities;
+    for(size_t i = 0; i < ref_X.size(); i++){
+        result.push_back(Eigen::Vector3d(   ref_X[i][0] + velocities[i][0] * t, 
+                                            ref_X[i][1] + velocities[i][1] * t,
+                                            ref_X[i][2] + velocities[i][2] * t));
+    }
     return result;
 }
 
