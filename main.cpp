@@ -49,7 +49,7 @@ int main(){
     std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
-    def_X = deform(obj.nodes);
+    def_X = gravity(obj, stepPerFrame); // deform(obj.nodes);
     // 3. Precompute B and W.
     precompute(obj.nodes, obj.tetras, B, W);
     // 4. Init all velocities to zero.

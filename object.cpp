@@ -9,17 +9,6 @@ std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
     return result;
 }
 
-std::vector<Eigen::Vector3d> gravity(Object obj, int t){
-    double g = -9.81;  // assume each node has 1
-    std::vector<Eigen::Vector3d> result, ref_X = obj.nodes, velocities = obj.velocities;
-    for(size_t i = 0; i < ref_X.size(); i++){
-        result.push_back(Eigen::Vector3d(   ref_X[i][0] + velocities[i][0] * t, 
-                                            ref_X[i][1] + velocities[i][1] * t,
-                                            ref_X[i][2] + velocities[i][2] * t));
-    }
-    return result;
-}
-
 int serialize(int x, int y, int z){
     return x*(SIZE + 1)*(SIZE + 1) + y*(SIZE + 1) + z;
 }
@@ -144,4 +133,19 @@ void Object::export_obj(int index){
     }
     // 3. close the file.
     myfile.close();
+}
+
+std::vector<Eigen::Vector3d> gravity(Object obj, int t){
+    double g = -1.5;  // assume each node has 1
+    std::vector<Eigen::Vector3d> result, ref_X = obj.nodes, velocities = obj.velocities;
+    // find midpoint
+    Eigen::Vector3d midPoint = Eigen::Vector3d( *(ref_X.end()) - *(ref_X.begin())) / 2.0;
+    double midNorm = midPoint.norm();
+
+    for (auto item : ref_X){
+        result.push_back(Eigen::Vector3d(   item[0],
+                                            item[1] + g*t*t/10 + std::abs(item.norm() - midNorm)/10,
+                                            item[2]));
+    }
+    return result;
 }
