@@ -1,4 +1,4 @@
-#include "stdlib.h"
+//#include "stdlib.h"
 #include "formula.hpp"
 
 void precompute(std::vector<Eigen::Vector3d> X,

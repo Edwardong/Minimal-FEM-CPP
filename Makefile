@@ -1,6 +1,6 @@
 gxx = g++
 
-CXXFLAGS = -g -ggdb
+CXXFLAGS = -g -ggdb -std=c++11
 
 TETGEN_DIR = include/tetgen
 
@@ -13,7 +13,7 @@ all: main
 
 main: ${DEPENDENCIES}
 	${gxx} $^ -o $@
-	./main
+	#./main
 	# rm *.o main 
 
 # %.o: %.cpp %.hpp
@@ -34,4 +34,4 @@ test_object: test_object.o object.o loader.o ${tetgen}
 # 	${gxx} ${CXXFLAGS} $^ -o $@.out
 
 clean:
-	rm *.o *.out main ${TETGEN_DIR}/*.a ${TETGEN_DIR}/*.o
+	rm *.o main ${TETGEN_DIR}/*.a ${TETGEN_DIR}/*.o

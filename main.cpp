@@ -9,13 +9,17 @@
 
 
 int main(){
-    std::vector<Eigen::Vector3d> ref_X, def_X;
-    std::vector<Eigen::Vector4i> tetra;
+    //std::vector<Eigen::Vector3d> ref_X, def_X;
+    //std::vector<Eigen::Vector4i> tetra;
 
     // object loader should load to nodes
     // init nodes
-    std::vector<Object> objects;
-    Object obj = load("cube2x2x2.obj");
+    //std::vector<Object> objects;
+    
+    Object obj = load("models/redundant_unit_cube.obj");
+
+    obj.export_obj(1);
+    std::cout<< "Finished exporting here." <<std::endl;
     // obj.preCompute() // compute B and W
     // objects.push_back(obj);
     // // do I need shape?
