@@ -20,10 +20,15 @@ void precompute(std::vector<Eigen::Vector3d> X,
     return;
 }
 
-
+//constitutive law
 Eigen::Matrix3d compute_P(Eigen::Matrix3d F){
-    Eigen::Matrix3d E = 0.5 * (F.transpose() * F - Eigen::Matrix3d::Identity());
-    return (F * (2*MU*E + LAMBDA*E.trace()*Eigen::Matrix3d::Identity()));
+    Eigen::Matrix3d E = 0.5 * (F.transpose() * F - I3);
+    return (F * (2*MU*E + LAMBDA*E.trace()*I3));
+}
+
+void negative_V(std::vector<Eigen::Vector3d> &V){
+    for(std::vector<Eigen::Vector3d>::iterator it = V.begin(); it != V.end(); ++it)
+        *it = -*it;
 }
 
 
@@ -62,10 +67,11 @@ std::vector<Eigen::Vector3d> compute_F( std::vector<Eigen::Vector3d> def_X,
 
 
 Eigen::Matrix3d compute_dP(Eigen::Matrix3d F, Eigen::Matrix3d dF){
-    Eigen::Matrix3d E = 0.5 * (F.transpose() * F - Eigen::Matrix3d::Identity());
+    //St. VK
+    Eigen::Matrix3d E = 0.5 * (F.transpose() * F - I3);
     Eigen::Matrix3d dE = 0.5 * (dF.transpose() * F + F.transpose() * dF);
-    Eigen::Matrix3d dP = dF * (2*MU*E + LAMBDA*E.trace()*Eigen::Matrix3d::Identity() + F*
-                        (2*MU*dE + LAMBDA*dE.trace()*Eigen::Matrix3d::Identity()));
+    Eigen::Matrix3d dP = dF * (2*MU*E + LAMBDA*E.trace()*I3 + F*
+                        (2*MU*dE + LAMBDA*dE.trace()*I3));
     return dP;
 }
 
