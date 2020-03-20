@@ -16,10 +16,15 @@ int main(){
     // init nodes
     //std::vector<Object> objects;
     
-    Object obj = load("models/redundant_unit_cube.obj");
+    // Object obj = load("models/redundant_unit_cube.obj");
+    // std::cout<< "Finished loading the first." <<std::endl;
+    // obj.export_obj(1);
+    // std::cout<< "Finished exporting the first." <<std::endl;
 
-    obj.export_obj(1);
-    std::cout<< "Finished exporting here." <<std::endl;
+    Object obj2 = load("cube2x2x2.obj");
+    std::cout<< "Finished loading the second." <<std::endl;
+    obj2.export_obj(2);
+    std::cout<< "Finished exporting the second." <<std::endl;
     // obj.preCompute() // compute B and W
     // objects.push_back(obj);
     // // do I need shape?
