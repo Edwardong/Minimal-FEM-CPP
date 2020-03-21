@@ -8,7 +8,7 @@
 #include <sys/types.h>
 
 #define N_STEPS 1000 // number of iterations
-#define stepPerFrame 5
+#define stepPerFrame 10
 
 int main(){
     //std::vector<Eigen::Vector3d> ref_X, def_X;
@@ -54,16 +54,15 @@ int main(){
 
 
     // 1. load *.obj to Object obj.
-    //Object ori_obj = load("models/redundant_unit_cube.obj");
-    Object ori_obj = load_obj();
-    //std::cout<< "Finished loading the second." <<std::endl;
+    // Object obj = load("models/redundant_unit_cube.obj");
+    Object obj = load_obj(); // for debugging
+    std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
-    def_X = deform(ori_obj.nodes); // deform(obj.nodes);
+    obj.nodes = deform(obj.nodes);
+
     // 3. Precompute B and W.
-    precompute(ori_obj.nodes, ori_obj.tetras, B, W);
-    // 4. Init all velocities to zero.
-    ori_obj.initVelocitiesToZero();
+    precompute(obj.refNodes, obj.tetras, B, W);
 
     // std::vector<Object> objects;
     // objects.push_back(ori_obj);
@@ -94,18 +93,18 @@ int main(){
     for (size_t i = 0; i < N_STEPS; i++){
 
         // 5. Update positions and velocities.
-        F = update_XV(def_X, ori_obj.tetras, ori_obj.velocities, B, W);
+        F = update_XV(obj.nodes, obj.tetras, obj.velocities, B, W);
         // compute forces for debug
         // for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
         if(i % stepPerFrame == 0){
             // 4. Export to *.obj
-            ori_obj.export_obj(count, "out");
+            obj.export_obj(count, "out");
             if (count==1 ||count % 10 == 0){
                 std::cout<<"exported the " << count << "-th obj" <<std::endl;
             }
             count++;
+            std::cout<<i<<" / "<<N_STEPS<<std::endl;
         }
-        ori_obj.nodes = def_X;
     }
 
     return 0;
