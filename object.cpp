@@ -3,9 +3,18 @@
 #include <iostream>
 
 std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
-    // Only one dimension "y" changed.
+    // Move (z direction) so that its bottom is 20% of its height above ground (xy-plane)
+    double min = ref_X[0][2];
+    double max = ref_X[0][2];
+    for(auto n : ref_X) {
+        if(n[2] < min) min = n[2];
+        if(n[2] > max) max = n[2];
+    }
+    double height = max - min;
     std::vector<Eigen::Vector3d> result;
-    for (auto item : ref_X) result.push_back(Eigen::Vector3d(item[0], item[1], item[2]+SIZE*0.2));
+    for (auto item : ref_X) {
+        result.push_back(Eigen::Vector3d(item[0], item[1], (item[2] - min + height*0.20)));
+    }
     return result;
 }
 
@@ -108,10 +117,10 @@ Object load(std::string filename) {
 // facea[i] has vn of normals[i] for all 3 vertices
 // for some obj viewer with backface culling, the front normal of ABC is ABxAC
 void Object::generateFacesAndNormals(std::vector<Eigen::Vector3d>& normals, std::vector<Eigen::Vector3i>& faces) {
-    int nIndex = 0;
+    Eigen::Vector3d n;
     for(auto tetra : tetras){
         // face 012
-        Eigen::Vector3d n = (nodes[tetra[1]] - nodes[tetra[0]]).cross(nodes[tetra[2]] - nodes[tetra[0]]).normalized();
+        n = (nodes[tetra[1]] - nodes[tetra[0]]).cross(nodes[tetra[2]] - nodes[tetra[0]]).normalized();
         if(n.dot(nodes[tetra[3]] - nodes[tetra[0]]) < 0) {
             normals.push_back(n);
             faces.push_back(Eigen::Vector3i(tetra[0], tetra[1], tetra[2]));
@@ -161,6 +170,7 @@ void Object::export_obj(int index, std::string out_dir){
     for(auto vertex : nodes){
         myfile << "v " << vertex[0] << " " << vertex[1] << " " << vertex[2] << std::endl;
     }
+    myfile << std::endl;
 
     // // 2.2 write vertex normals and tetrahedral faces
     // myfile << "g tetras\n";
@@ -171,6 +181,7 @@ void Object::export_obj(int index, std::string out_dir){
     for(auto n : normals) {
         myfile << "vn " << n[0] << " " << n[1] << " " << n[2] << std::endl;
     }
+    myfile << std::endl;
 
     // Turn on vn
     for(int i = 0; i < faces.size(); i++) {
@@ -179,6 +190,7 @@ void Object::export_obj(int index, std::string out_dir){
             << faces[i][1]+1 << "//" << i+1 << " " 
             << faces[i][2]+1 << "//" << i+1 << std::endl;
     } 
+    myfile << std::endl;
 
     // // Turn off vn
     // for(int i = 0; i < faces.size(); i++) {
