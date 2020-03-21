@@ -8,6 +8,11 @@
 
 // !!! IMPORTANT: ONLY THE FIRST SHAPE WILL BE LOADED
 
+// Tetrahedralize the PLC. Switches are chosen to read a PLC (p),
+//   do quality mesh generation (q) with a specified quality bound
+//   (1.414), and apply a maximum volume constraint (a0.001).
+char* TETGEN_PARAM = "pq2a0.0001O/7";
+
 // cut string %%%a$$$ into %%%a and $$$
 std::string cutAt(std::string& s, char a) {
     int index = s.find_first_of(a);
@@ -128,10 +133,8 @@ void tetrahedralize(std::vector<double> vertices, std::vector<std::vector<int>> 
     for(int i = 0; i < in.numberoffacets; i++)
         in.facetmarkerlist[i] = 0;
 
-    // Tetrahedralize the PLC. Switches are chosen to read a PLC (p),
-    //   do quality mesh generation (q) with a specified quality bound
-    //   (1.414), and apply a maximum volume constraint (a0.1).
-    tetrahedralize("pq2a0.01O/7", &in, &out);
+
+    tetrahedralize(TETGEN_PARAM, &in, &out);
 
     // Output files for debugging
     // out.save_nodes("tetgen_tmp");

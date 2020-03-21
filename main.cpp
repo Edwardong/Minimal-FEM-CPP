@@ -7,8 +7,8 @@
 #include <sys/stat.h> 
 #include <sys/types.h>
 
-#define N_STEPS 1000 // number of iterations
-#define stepPerFrame 5
+#define N_STEPS 400 // number of iterations
+#define stepPerFrame 4
 
 int main(){
     //std::vector<Eigen::Vector3d> ref_X, def_X;
@@ -55,32 +55,44 @@ int main(){
 
     // 1. load *.obj to Object obj.
     //Object obj = load("models/redundant_unit_cube.obj");
-    Object obj = load_obj();
+    Object obj = load_obj(); // for debugging
     //std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
-    def_X = deform(obj.nodes); // deform(obj.nodes);
-    // 3. Precompute B and W.
-    precompute(obj.nodes, obj.tetras, B, W);
-    // 4. Init all velocities to zero.
-    obj.initVelocitiesToZero();
+    obj.nodes = deform(obj.nodes);
 
+    // 3. Precompute B and W.
+    precompute(obj.refNodes, obj.tetras, B, W);
+
+    // std::vector<Object> objects;
+    // objects.push_back(ori_obj);
+
+    // for(size_t i = 0; i < N_STEPS; i++){
+    //     Object prevObj = *(objects.begin() + i);
+    //     Object newObj(deform(prevObj.nodes),prevObj.tetras);
+    //     // newObj.nodes = deform(prevObj.nodes);
+    //     // newObj.tetras = prevObj.tetras;
+    //     newObj.velocities = prevObj.velocities;
+    //     //newObj.initVelocitiesToZero();
+    //     update_XV(newObj.nodes, newObj.tetras, newObj.velocities, B, W); // FIX! newObj.B/W or prevObj.B/W
+    //     objects.push_back(newObj);
+    // }
     int count = 1;
     for (size_t i = 0; i < N_STEPS; i++){
 
         // 5. Update positions and velocities.
-        F = update_XV(def_X, obj.tetras, obj.velocities, B, W);
+        F = update_XV(obj.nodes, obj.tetras, obj.velocities, B, W);
         // compute forces for debug
         // for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
         if(i % stepPerFrame == 0){
             // 4. Export to *.obj
             obj.export_obj(count, "out");
             if (count==1 ||count % 10 == 0){
-                std::cout<<"exported the " << count << "-th obj" <<std::endl;
+                std::cout<<"exported the " << count << "-th/"<< N_STEPS/stepPerFrame << " obj" <<std::endl;
             }
             count++;
+            //std::cout<<i<<" / "<<N_STEPS<<std::endl;
         }
-        obj.nodes = def_X;
     }
 
     return 0;
