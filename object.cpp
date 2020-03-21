@@ -52,15 +52,12 @@ Object load_obj(){
 
 
 
-Object::Object(){}
+// Object::Object(){}
 
 Object::Object(std::vector<Eigen::Vector3d> nodes, std::vector<Eigen::Vector4i> tetras) {
     this->nodes = nodes;
     this->tetras = tetras;
-    initVelocitiesToZero();
-}
-
-void Object::initVelocitiesToZero() {
+    this->refNodes = nodes;
     for(int i = 0; i < nodes.size(); i++) {
         velocities.push_back(Eigen::Vector3d(0,0,0));
     }
@@ -107,6 +104,51 @@ Object load(std::string filename) {
     return Object(nodes, tetras);
 }
 
+
+// facea[i] has vn of normals[i] for all 3 vertices
+// for some obj viewer with backface culling, the front normal of ABC is ABxAC
+void Object::generateFacesAndNormals(std::vector<Eigen::Vector3d>& normals, std::vector<Eigen::Vector3i>& faces) {
+    int nIndex = 0;
+    for(auto tetra : tetras){
+        // face 012
+        Eigen::Vector3d n = (nodes[tetra[1]] - nodes[tetra[0]]).cross(nodes[tetra[2]] - nodes[tetra[0]]).normalized();
+        if(n.dot(nodes[tetra[3]] - nodes[tetra[0]]) < 0) {
+            normals.push_back(n);
+            faces.push_back(Eigen::Vector3i(tetra[0], tetra[1], tetra[2]));
+        } else {
+            normals.push_back(-n);
+            faces.push_back(Eigen::Vector3i(tetra[0], tetra[2], tetra[1]));
+        }
+        // face 013
+        n = (nodes[tetra[1]] - nodes[tetra[0]]).cross(nodes[tetra[3]] - nodes[tetra[0]]).normalized();
+        if(n.dot(nodes[tetra[2]] - nodes[tetra[0]]) < 0) {
+            normals.push_back(n);
+            faces.push_back(Eigen::Vector3i(tetra[0], tetra[1], tetra[3]));
+        } else {
+            normals.push_back(-n);
+            faces.push_back(Eigen::Vector3i(tetra[0], tetra[3], tetra[1]));
+        }
+        // face 023
+        n = (nodes[tetra[2]] - nodes[tetra[0]]).cross(nodes[tetra[3]] - nodes[tetra[0]]).normalized();
+        if(n.dot(nodes[tetra[1]] - nodes[tetra[0]]) < 0) {
+            normals.push_back(n);
+            faces.push_back(Eigen::Vector3i(tetra[0], tetra[2], tetra[3]));
+        } else {
+            normals.push_back(-n);
+            faces.push_back(Eigen::Vector3i(tetra[0], tetra[3], tetra[2]));
+        }
+        // face 123
+        n = (nodes[tetra[2]] - nodes[tetra[1]]).cross(nodes[tetra[3]] - nodes[tetra[1]]).normalized();
+        if(n.dot(nodes[tetra[0]] - nodes[tetra[1]]) < 0) {
+            normals.push_back(n);
+            faces.push_back(Eigen::Vector3i(tetra[1], tetra[2], tetra[3]));
+        } else {
+            normals.push_back(-n);
+            faces.push_back(Eigen::Vector3i(tetra[1], tetra[3], tetra[2]));
+        }
+    }
+}
+
 void Object::export_obj(int index){
     // 1. create file.
     std::ofstream myfile;
@@ -114,38 +156,39 @@ void Object::export_obj(int index){
     myfile.open(name);
 
     // 2. write to file.
-    // // 2.1 write vertex info 
+    // // 2.1 write vertices  
     myfile << "g default\n";
     for(auto vertex : nodes){
-        std::string v = "v ";
-        v += std::to_string(vertex[0]) + " " + std::to_string(vertex[1]) + " " + std::to_string(vertex[2]) + "\n";
-        myfile << v;
+        myfile << "v " << vertex[0] << " " << vertex[1] << " " << vertex[2] << std::endl;
     }
-    // // 2.2 write tetrahedral faces
-    myfile << "g tetras\n";
-    for(auto tetra : tetras){
-        std::string f = "f ";
-        f += std::to_string(1 + tetra[0]) + " " + std::to_string(1 + tetra[1]) + " " + std::to_string(1 + tetra[2]) + "\n";
-        f += "f " + std::to_string(1 + tetra[1]) + " " + std::to_string(1 + tetra[2]) + " " + std::to_string(1 + tetra[3]) + "\n";
-        f += "f " + std::to_string(1 + tetra[0]) + " " + std::to_string(1 + tetra[2]) + " " + std::to_string(1 + tetra[3]) + "\n";
-        f += "f " + std::to_string(1 + tetra[0]) + " " + std::to_string(1 + tetra[1]) + " " + std::to_string(1 + tetra[3]) + "\n";
-        myfile << f;
+
+    // // 2.2 write vertex normals and tetrahedral faces
+    // myfile << "g tetras\n";
+    std::vector<Eigen::Vector3d> normals;
+    std::vector<Eigen::Vector3i> faces;
+    generateFacesAndNormals(normals, faces);
+    // facea[i] has vn of normals[i] for all 3 vertices
+    for(auto n : normals) {
+        myfile << "vn " << n[0] << " " << n[1] << " " << n[2] << std::endl;
     }
+
+    // Turn on vn
+    for(int i = 0; i < faces.size(); i++) {
+        myfile << "f " 
+            << faces[i][0]+1 << "//" << i+1 << " " 
+            << faces[i][1]+1 << "//" << i+1 << " " 
+            << faces[i][2]+1 << "//" << i+1 << std::endl;
+    } 
+
+    // // Turn off vn
+    // for(int i = 0; i < faces.size(); i++) {
+    //     myfile << "f " 
+    //         << faces[i][0]+1 << " " 
+    //         << faces[i][1]+1 << " " 
+    //         << faces[i][2]+1 << std::endl;
+    // } 
+
     // 3. close the file.
     myfile.close();
 }
 
-std::vector<Eigen::Vector3d> gravity(Object obj, int t){
-    double g = -1.5;  // assume each node has 1
-    std::vector<Eigen::Vector3d> result, ref_X = obj.nodes, velocities = obj.velocities;
-    // find midpoint
-    Eigen::Vector3d midPoint = Eigen::Vector3d( *(ref_X.end()) - *(ref_X.begin())) / 2.0;
-    double midNorm = midPoint.norm();
-
-    for (auto item : ref_X){
-        result.push_back(Eigen::Vector3d(   item[0],
-                                            item[1] + g*t*t/10 + std::abs(item.norm() - midNorm)/10,
-                                            item[2]));
-    }
-    return result;
-}

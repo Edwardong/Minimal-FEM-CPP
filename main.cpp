@@ -45,29 +45,29 @@ int main(){
     std::vector<double> W;
 
     // 1. load *.obj to Object obj.
-    Object obj = load("models/redundant_unit_cube.obj");
+    // Object obj = load("models/redundant_unit_cube.obj");
+    Object obj = load_obj(); // for debugging
     std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
-    def_X = gravity(obj, stepPerFrame); // deform(obj.nodes);
+    obj.nodes = deform(obj.nodes);
+
     // 3. Precompute B and W.
-    precompute(obj.nodes, obj.tetras, B, W);
-    // 4. Init all velocities to zero.
-    obj.initVelocitiesToZero();
+    precompute(obj.refNodes, obj.tetras, B, W);
 
     int count = 1;
     for (size_t i = 0; i < N_STEPS; i++){
 
         // 5. Update positions and velocities.
-        F = update_XV(def_X, obj.tetras, obj.velocities, B, W);
+        F = update_XV(obj.nodes, obj.tetras, obj.velocities, B, W);
         // compute forces for debug
         // for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
         if(i % stepPerFrame == 0){
             // 4. Export to *.obj
             obj.export_obj(count);
             count++;
+            std::cout<<i<<" / "<<N_STEPS<<std::endl;
         }
-        obj.nodes = def_X;
     }
 
     return 0;
