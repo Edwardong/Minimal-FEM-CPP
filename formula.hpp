@@ -16,7 +16,7 @@
 #define MU 0.3
 #define LAMBDA 0.3
 #define GAMMA 8
-#define DELTA_TIME 1
+#define DELTA_TIME 0.2
 #define MASS 20.0
 #define I3 Eigen::Matrix3d::Identity()
 #define GRAVITY Eigen::Vector3d(0,0,-0.0002)

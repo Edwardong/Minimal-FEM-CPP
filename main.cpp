@@ -7,8 +7,8 @@
 #include <sys/stat.h> 
 #include <sys/types.h>
 
-#define N_STEPS 400 // number of iterations
-#define stepPerFrame 4
+#define N_STEPS 1000 // number of iterations
+#define stepPerFrame 10
 
 int main(){
     //std::vector<Eigen::Vector3d> ref_X, def_X;
@@ -54,8 +54,8 @@ int main(){
 
 
     // 1. load *.obj to Object obj.
-    //Object obj = load("models/redundant_unit_cube.obj");
-    Object obj = load_obj(); // for debugging
+    Object obj = load("models/redundant_unit_cube.obj");
+    // Object obj = load_obj(); // for debugging
     //std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
