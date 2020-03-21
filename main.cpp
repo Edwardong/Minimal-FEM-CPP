@@ -49,7 +49,7 @@ int main(){
     std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
-    def_X = gravity(obj, stepPerFrame); // deform(obj.nodes);
+    def_X = deform(obj.nodes);
     // 3. Precompute B and W.
     precompute(obj.nodes, obj.tetras, B, W);
     // 4. Init all velocities to zero.
@@ -65,6 +65,7 @@ int main(){
         if(i % stepPerFrame == 0){
             // 4. Export to *.obj
             obj.export_obj(count);
+            std::cout << "Volume: " << obj.volumn() << std::endl; 
             count++;
         }
         obj.nodes = def_X;
