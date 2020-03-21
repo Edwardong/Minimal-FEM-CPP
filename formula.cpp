@@ -20,12 +20,18 @@ void precompute(std::vector<Eigen::Vector3d> X,
     return;
 }
 
-
+//constitutive law
 Eigen::Matrix3d compute_P(Eigen::Matrix3d F){
-    Eigen::Matrix3d E = 0.5 * (F.transpose() * F - Eigen::Matrix3d::Identity());
-    return (F * (2*MU*E + LAMBDA*E.trace()*Eigen::Matrix3d::Identity()));
+    Eigen::Matrix3d E = 0.5 * (F.transpose() * F - I3);
+    return (F * (2*MU*E + LAMBDA*E.trace()*I3));
 }
 
+std::vector<Eigen::Vector3d> negative_V(std::vector<Eigen::Vector3d> V){
+    std::vector<Eigen::Vector3d> nV;
+    for(std::vector<Eigen::Vector3d>::iterator it = V.begin(); it != V.end(); ++it)
+        nV.push_back(-*it);
+    return nV;
+}
 
 std::vector<Eigen::Vector3d> compute_F( std::vector<Eigen::Vector3d> def_X,
                                         std::vector<Eigen::Vector4i> T,
@@ -62,10 +68,11 @@ std::vector<Eigen::Vector3d> compute_F( std::vector<Eigen::Vector3d> def_X,
 
 
 Eigen::Matrix3d compute_dP(Eigen::Matrix3d F, Eigen::Matrix3d dF){
-    Eigen::Matrix3d E = 0.5 * (F.transpose() * F - Eigen::Matrix3d::Identity());
+    //St. VK
+    Eigen::Matrix3d E = 0.5 * (F.transpose() * F - I3);
     Eigen::Matrix3d dE = 0.5 * (dF.transpose() * F + F.transpose() * dF);
-    Eigen::Matrix3d dP = dF * (2*MU*E + LAMBDA*E.trace()*Eigen::Matrix3d::Identity() + F*
-                        (2*MU*dE + LAMBDA*dE.trace()*Eigen::Matrix3d::Identity()));
+    Eigen::Matrix3d dP = dF * (2*MU*E + LAMBDA*E.trace()*I3 + F*
+                        (2*MU*dE + LAMBDA*dE.trace()*I3));
     return dP;
 }
 
@@ -121,17 +128,34 @@ std::vector<Eigen::Vector3d> update_XV( std::vector<Eigen::Vector3d> &def_X,
                                         std::vector<Eigen::Matrix3d> B,
                                         std::vector<double> W){
     std::vector<Eigen::Vector3d> Fe = compute_F(def_X, T, B, W);
-    std::vector<Eigen::Vector3d> Fd = compute_dF(def_X, V, T, B, W);
+    //debug
+    std::vector<Eigen::Vector3d> nV = negative_V(V);
+    // std::cout << "this is V" << std::endl;
+    // std::cout << V[0] << std::endl;
+    // std::cout << "this is nV" << std::endl;
+    // std::cout << nV[0] << std::endl;
+
+    std::vector<Eigen::Vector3d> Fd = compute_dF(def_X, nV, T, B, W);
     std::vector<Eigen::Vector3d> F;
     for (size_t i =0; i < Fd.size(); i++){
         Fd[i] *= (-1) * GAMMA;
-        F.push_back(Fe[i]);
-        // F.push_back(Fe[i] + Fd[i]);
+        //F.push_back(Fe[i]);
+        F.push_back(Fe[i] + Fd[i]);
     }
     
     for (size_t j = 0; j < def_X.size(); j++){
-        V[j] += DELTA_TIME * F[j] / MASS;
+        Eigen::Vector3d acceleration = F[j] / MASS;
+        acceleration += GRAVITY;
+        // v' = v + dt * F / M
+        V[j] += DELTA_TIME * acceleration;
+        // x' = x + dt * v
         def_X[j] += DELTA_TIME * V[j];
+
+        //ground
+        if (def_X[j][2] < 0){
+            def_X[j][2] = 0;
+            V[j][2] *= -COEF_OF_RESTITUTION;
+        } 
     }
     return Fe;
 }

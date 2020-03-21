@@ -34,4 +34,4 @@ test_object: test_object.o object.o loader.o ${tetgen}
 # 	${gxx} ${CXXFLAGS} $^ -o $@.out
 
 clean:
-	rm *.o main ${TETGEN_DIR}/*.a ${TETGEN_DIR}/*.o
+	rm *.o main ${TETGEN_DIR}/*.a ${TETGEN_DIR}/*.o out/*.obj
