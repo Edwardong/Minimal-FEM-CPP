@@ -54,7 +54,8 @@ int main(){
 
 
     // 1. load *.obj to Object obj.
-    Object obj = load("models/redundant_unit_cube.obj");
+    //Object obj = load("models/redundant_unit_cube.obj");
+    Object obj = load_obj();
     //std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.

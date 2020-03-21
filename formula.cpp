@@ -128,7 +128,14 @@ std::vector<Eigen::Vector3d> update_XV( std::vector<Eigen::Vector3d> &def_X,
                                         std::vector<Eigen::Matrix3d> B,
                                         std::vector<double> W){
     std::vector<Eigen::Vector3d> Fe = compute_F(def_X, T, B, W);
-    std::vector<Eigen::Vector3d> Fd = compute_dF(def_X, negative_V(V), T, B, W);
+    //debug
+    std::vector<Eigen::Vector3d> nV = negative_V(V);
+    // std::cout << "this is V" << std::endl;
+    // std::cout << V[0] << std::endl;
+    // std::cout << "this is nV" << std::endl;
+    // std::cout << nV[0] << std::endl;
+
+    std::vector<Eigen::Vector3d> Fd = compute_dF(def_X, nV, T, B, W);
     std::vector<Eigen::Vector3d> F;
     for (size_t i =0; i < Fd.size(); i++){
         Fd[i] *= (-1) * GAMMA;
