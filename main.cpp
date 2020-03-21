@@ -5,8 +5,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define N_STEPS 400 // number of iterations
-#define stepPerFrame 4
+#define N_STEPS 1000 // number of iterations
+#define stepPerFrame 10
 
 int main(){
     //std::vector<Eigen::Vector3d> ref_X, def_X;

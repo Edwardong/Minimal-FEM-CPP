@@ -64,8 +64,7 @@ std::vector<Eigen::Vector3d> compute_F( std::vector<Eigen::Vector3d> def_X,
 Eigen::Matrix3d compute_dP(Eigen::Matrix3d F, Eigen::Matrix3d dF){
     Eigen::Matrix3d E = 0.5 * (F.transpose() * F - Eigen::Matrix3d::Identity());
     Eigen::Matrix3d dE = 0.5 * (dF.transpose() * F + F.transpose() * dF);
-    Eigen::Matrix3d dP = dF * (2*MU*E + LAMBDA*E.trace()*Eigen::Matrix3d::Identity() + F*
-                        (2*MU*dE + LAMBDA*dE.trace()*Eigen::Matrix3d::Identity()));
+    Eigen::Matrix3d dP = dF * (2*MU*E + LAMBDA*E.trace()*I3) + F * (2*MU*dE + LAMBDA*dE.trace()*I3);
     return dP;
 }
 
