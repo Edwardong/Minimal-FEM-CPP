@@ -54,33 +54,58 @@ int main(){
 
 
     // 1. load *.obj to Object obj.
-    //Object obj = load("models/redundant_unit_cube.obj");
-    Object obj = load_obj();
+    //Object ori_obj = load("models/redundant_unit_cube.obj");
+    Object ori_obj = load_obj();
     //std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
-    def_X = deform(obj.nodes); // deform(obj.nodes);
+    def_X = deform(ori_obj.nodes); // deform(obj.nodes);
     // 3. Precompute B and W.
-    precompute(obj.nodes, obj.tetras, B, W);
+    precompute(ori_obj.nodes, ori_obj.tetras, B, W);
     // 4. Init all velocities to zero.
-    obj.initVelocitiesToZero();
+    ori_obj.initVelocitiesToZero();
 
+    // std::vector<Object> objects;
+    // objects.push_back(ori_obj);
+
+    // for(size_t i = 0; i < N_STEPS; i++){
+    //     Object prevObj = *(objects.begin() + i);
+    //     Object newObj(deform(prevObj.nodes),prevObj.tetras);
+    //     // newObj.nodes = deform(prevObj.nodes);
+    //     // newObj.tetras = prevObj.tetras;
+    //     newObj.velocities = prevObj.velocities;
+    //     //newObj.initVelocitiesToZero();
+    //     update_XV(newObj.nodes, newObj.tetras, newObj.velocities, B, W); // FIX! newObj.B/W or prevObj.B/W
+    //     objects.push_back(newObj);
+    // }
+
+    // int counter = 1;
+    // for(size_t k = 0; k < objects.size(); k++){
+    //     if(k % stepPerFrame == 0){
+    //         // 4. Export to *.obj
+    //         objects[k].export_obj(counter, "out");
+    //         if (counter==1 ||counter % 10 == 0){
+    //             std::cout<<"exported the " << counter << "-th obj" <<std::endl;
+    //         }
+    //         counter++;
+    //     }
+    // }
     int count = 1;
     for (size_t i = 0; i < N_STEPS; i++){
 
         // 5. Update positions and velocities.
-        F = update_XV(def_X, obj.tetras, obj.velocities, B, W);
+        F = update_XV(def_X, ori_obj.tetras, ori_obj.velocities, B, W);
         // compute forces for debug
         // for (auto f : F) std::cout << "computed force:\n" << f << std::endl;
         if(i % stepPerFrame == 0){
             // 4. Export to *.obj
-            obj.export_obj(count, "out");
+            ori_obj.export_obj(count, "out");
             if (count==1 ||count % 10 == 0){
                 std::cout<<"exported the " << count << "-th obj" <<std::endl;
             }
             count++;
         }
-        obj.nodes = def_X;
+        ori_obj.nodes = def_X;
     }
 
     return 0;
