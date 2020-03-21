@@ -7,8 +7,8 @@
 #include <sys/stat.h> 
 #include <sys/types.h>
 
-#define N_STEPS 1000 // number of iterations
-#define stepPerFrame 10
+#define N_STEPS 400 // number of iterations
+#define stepPerFrame 4
 
 int main(){
     //std::vector<Eigen::Vector3d> ref_X, def_X;
@@ -54,9 +54,9 @@ int main(){
 
 
     // 1. load *.obj to Object obj.
-    // Object obj = load("models/redundant_unit_cube.obj");
+    //Object obj = load("models/redundant_unit_cube.obj");
     Object obj = load_obj(); // for debugging
-    std::cout<< "Finished loading the second." <<std::endl;
+    //std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
     obj.nodes = deform(obj.nodes);
@@ -77,18 +77,6 @@ int main(){
     //     update_XV(newObj.nodes, newObj.tetras, newObj.velocities, B, W); // FIX! newObj.B/W or prevObj.B/W
     //     objects.push_back(newObj);
     // }
-
-    // int counter = 1;
-    // for(size_t k = 0; k < objects.size(); k++){
-    //     if(k % stepPerFrame == 0){
-    //         // 4. Export to *.obj
-    //         objects[k].export_obj(counter, "out");
-    //         if (counter==1 ||counter % 10 == 0){
-    //             std::cout<<"exported the " << counter << "-th obj" <<std::endl;
-    //         }
-    //         counter++;
-    //     }
-    // }
     int count = 1;
     for (size_t i = 0; i < N_STEPS; i++){
 
@@ -100,10 +88,10 @@ int main(){
             // 4. Export to *.obj
             obj.export_obj(count, "out");
             if (count==1 ||count % 10 == 0){
-                std::cout<<"exported the " << count << "-th obj" <<std::endl;
+                std::cout<<"exported the " << count << "-th/"<< N_STEPS/stepPerFrame << " obj" <<std::endl;
             }
             count++;
-            std::cout<<i<<" / "<<N_STEPS<<std::endl;
+            //std::cout<<i<<" / "<<N_STEPS<<std::endl;
         }
     }
 
