@@ -13,7 +13,7 @@
 //   (1.414), and apply a maximum volume constraint (a0.001).
 // On average, a0.0001 => 21000 tetras
 //             a0.001  => 2400  tetras
-char* TETGEN_PARAM = "pq1.5a0.0001O/7";
+char* TETGEN_PARAM = "pq1.5a0.001O/7";
 
 // cut string %%%a$$$ into %%%a and $$$
 std::string cutAt(std::string& s, char a) {
