@@ -16,7 +16,7 @@
 #define MU 0.3
 #define LAMBDA 0.3
 #define GAMMA 8
-#define DELTA_TIME 1
+#define DELTA_TIME 0.5
 #define MASS 20.0
 #define I3 Eigen::Matrix3d::Identity()
 #define GRAVITY Eigen::Vector3d(0,0,-0.0002)
@@ -24,9 +24,9 @@
 //remind
 //input two empty vectors B, W
 void precompute(std::vector<Eigen::Vector3d> X,
-                               std::vector<Eigen::Vector4i> T,
-                               std::vector<Eigen::Matrix3d> &B,
-                               std::vector<double> &W);
+                std::vector<Eigen::Vector4i> T,
+                std::vector<Eigen::Matrix3d> &B,
+                std::vector<double> &W);
 
 Eigen::Matrix3d compute_P(Eigen::Matrix3d F);
 

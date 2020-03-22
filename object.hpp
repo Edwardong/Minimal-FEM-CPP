@@ -8,7 +8,6 @@
 
 #define SIZE 10
 
-std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X);
 
 // Object class encapsulates nodes, tetras, and velocities of an object
 class Object {
@@ -24,7 +23,7 @@ class Object {
     // Translate all nodes for a 'displacement'
     void translate(Eigen::Vector3d displacement);
     // Total volumn of the object
-    double volumn();
+    double volumn() const;
     // Export as object file
     void export_obj(int index,std::string out_dir);
     // Generate faces "f" and normals "vn", for export
@@ -32,6 +31,9 @@ class Object {
     // Print Object
     friend std::ostream& operator<<(std::ostream& os, const Object& obj);
 };
+
+std::vector<Eigen::Vector3d> scale(std::vector<Eigen::Vector3d> nodes);
+std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X);
 
 std::vector<Eigen::Vector3d> gravity(Object obj, int t);
 
