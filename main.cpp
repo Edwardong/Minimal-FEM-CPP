@@ -7,7 +7,7 @@
 #include <sys/stat.h> 
 #include <sys/types.h>
 
-#define N_STEPS 1000 // number of iterations
+#define N_STEPS 3000 // number of iterations
 #define stepPerFrame 20
 
 int main(int argc, char *argv[]){
