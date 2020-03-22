@@ -2,6 +2,23 @@
 #include "loader.hpp"
 #include <iostream>
 
+
+std::vector<Eigen::Vector3d> scale(std::vector<Eigen::Vector3d> nodes){
+    double min = nodes[0][2];
+    double max = nodes[0][2];
+    for(auto n : nodes) {
+        if(n[2] < min) min = n[2];
+        if(n[2] > max) max = n[2];
+    }
+    double height = max - min;
+    std::vector<Eigen::Vector3d> result;
+    for (auto n : nodes) {
+        result.push_back(n / height * SIZE);
+    }
+    return result;
+}
+
+
 std::vector<Eigen::Vector3d> deform(std::vector<Eigen::Vector3d> ref_X){
     // Move (z direction) so that its bottom is 20% of its height above ground (xy-plane)
     double min = ref_X[0][2];
@@ -78,7 +95,7 @@ void Object::translate(Eigen::Vector3d displacement) {
     }
 }
 
-double Object::volumn() {
+double Object::volumn() const {
     double volumn = 0;
     for(auto t : tetras) {
         Eigen::Vector3d a = nodes[t[0]];
@@ -92,7 +109,8 @@ double Object::volumn() {
 
 std::ostream& operator<<(std::ostream& os, const Object& obj) {
     os  << obj.nodes.size() << " nodes, " 
-        << obj.tetras.size() << " tetras." << std::endl;
+        << obj.tetras.size() << " tetras. " 
+        << "Volumn: " << obj.volumn() << ". " << std::endl;
     // for(auto n : obj.nodes) {
     //     os << "( " << n[0] << " " << n[1] << " " << n[2] << " )" << std::endl;
     // }

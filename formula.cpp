@@ -11,9 +11,9 @@ void precompute(std::vector<Eigen::Vector3d> X,
         Eigen::Vector3d k =  X[t[2]];
         Eigen::Vector3d l =  X[t[3]];
         Eigen::Matrix3d D;
-        D<< i[0]-l[0], j[0]-l[0], k[0]-l[0],
-            i[1]-l[1], j[1]-l[1], k[1]-l[1],
-            i[2]-l[2], j[2]-l[2], k[2]-l[2];
+        D << i[0]-l[0], j[0]-l[0], k[0]-l[0],
+             i[1]-l[1], j[1]-l[1], k[1]-l[1],
+             i[2]-l[2], j[2]-l[2], k[2]-l[2];
         B.push_back(D.inverse());
         W.push_back(abs(D.determinant() / 6.0));
     }
@@ -23,7 +23,7 @@ void precompute(std::vector<Eigen::Vector3d> X,
 //constitutive law
 Eigen::Matrix3d compute_P(Eigen::Matrix3d F){
     Eigen::Matrix3d E = 0.5 * (F.transpose() * F - I3);
-    return (F * (2*MU*E + LAMBDA*E.trace()*I3));
+    return F * (2*MU*E + LAMBDA*E.trace()*I3);
 }
 
 std::vector<Eigen::Vector3d> negative_V(std::vector<Eigen::Vector3d> V){
@@ -120,6 +120,15 @@ std::vector<Eigen::Vector3d> compute_dF(std::vector<Eigen::Vector3d> def_X,
     }
     return df;
 }
+
+
+// std::vector<Eigen::Vector3d> negative_V(std::vector<Eigen::Vector3d> V){
+//     std::vector<Eigen::Vector3d> nV;
+//     for(auto& v : V)
+//         nV.push_back(-v);
+//     return nV;
+// }
+
 
 std::vector<Eigen::Vector3d> update_XV( std::vector<Eigen::Vector3d> &def_X,
                                         std::vector<Eigen::Vector4i> T,

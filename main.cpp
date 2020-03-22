@@ -8,9 +8,9 @@
 #include <sys/types.h>
 
 #define N_STEPS 1000 // number of iterations
-#define stepPerFrame 10
+#define stepPerFrame 20
 
-int main(){
+int main(int argc, char *argv[]){
     //std::vector<Eigen::Vector3d> ref_X, def_X;
     //std::vector<Eigen::Vector4i> tetra;
 
@@ -52,14 +52,23 @@ int main(){
     else 
         std::cout << "Directory created\n"; 
 
+    std::string filename = "models/redundant_unit_cube.obj";
+    std::string argFilename(argv[argc - 1]);
+    if(argFilename.substr(argFilename.length() - 4, 4) == ".obj") 
+        filename = argFilename;
+    std::cout<<filename<<std::endl;
+    
 
     // 1. load *.obj to Object obj.
-    Object obj = load("models/redundant_unit_cube.obj");
+    Object obj = load(filename);
     // Object obj = load_obj(); // for debugging
     //std::cout<< "Finished loading the second." <<std::endl;
 
     // 2. Deform the object. Convert the object nodes to def_X.
-    obj.nodes = deform(obj.nodes);
+    obj.refNodes = scale(obj.refNodes);
+    obj.nodes = deform(obj.refNodes);
+
+    std::cout<<obj<<std::endl;
 
     // 3. Precompute B and W.
     precompute(obj.refNodes, obj.tetras, B, W);

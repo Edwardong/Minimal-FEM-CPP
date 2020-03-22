@@ -11,7 +11,9 @@
 // Tetrahedralize the PLC. Switches are chosen to read a PLC (p),
 //   do quality mesh generation (q) with a specified quality bound
 //   (1.414), and apply a maximum volume constraint (a0.001).
-char* TETGEN_PARAM = "pq2a0.0001O/7";
+// On average, a0.0001 => 21000 tetras
+//             a0.001  => 2400  tetras
+char* TETGEN_PARAM = "pq1.5a0.0001O/7";
 
 // cut string %%%a$$$ into %%%a and $$$
 std::string cutAt(std::string& s, char a) {
@@ -51,7 +53,10 @@ std::string cleanCut(std::string& s, char a) {
 void readObjFile(const std::string filename, std::vector<double>& vertices, std::vector<std::vector<int>>& polygons) {
 
     std::ifstream file(filename);
-    if(!file.good()) return;
+    if(!file.good()) {
+        std::cout<<"Error in readObjFile(): cannot open file " << filename << std::endl;
+        return;
+    }
     while(!file.eof()) {
         std::string line;
         getline(file, line);
@@ -137,9 +142,9 @@ void tetrahedralize(std::vector<double> vertices, std::vector<std::vector<int>> 
     tetrahedralize(TETGEN_PARAM, &in, &out);
 
     // Output files for debugging
-    // out.save_nodes("tetgen_tmp");
-    // out.save_faces("tetgen_tmp");
-    // out.save_edges("tetgen_tmp");
+    out.save_nodes("tetgen_tmp");
+    out.save_faces("tetgen_tmp");
+    out.save_edges("tetgen_tmp");
 
     // Create nodes and tetras from out
     for(int i = 0; i < out.numberofpoints; i++) {
