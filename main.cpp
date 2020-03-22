@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
     else 
         std::cout << "Directory created\n"; 
 
-    std::string filename = "models/redundant_unit_cube.obj";
+    std::string filename = "models/unit_cube.obj";
     std::string argFilename(argv[argc - 1]);
     if(argFilename.substr(argFilename.length() - 4, 4) == ".obj") 
         filename = argFilename;
