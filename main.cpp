@@ -4,8 +4,6 @@
 #include <eigen3/Eigen/Eigen>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/stat.h> 
-#include <sys/types.h>
 
 #define N_STEPS 400 // number of iterations
 #define stepPerFrame 4
