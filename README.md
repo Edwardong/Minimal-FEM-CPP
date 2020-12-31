@@ -3,7 +3,7 @@
 
 This is a final project of CS180, an undergraduate-level Computer Graphics course taught by a talented genius Professor [Lingqi Yan](https://sites.cs.ucsb.edu/~lingqi/) at University of California, Santa Barbara.
 
-This project has a python sibling: [minimal-FEM-simulation](https://github.com/Ara-yjx/minimal-FEM-simulation), which served as a prototype for validating the correctness of algorithm implementation, mainly developed by [Petry Ye](https://github.com/Ara-yjx), an incredibly smart student major in CCS computing at UCSB.
+This project has a python sibling: [minimal-FEM-simulation](https://github.com/Ara-yjx/minimal-FEM-simulation), which served as a prototype for validating the correctness of algorithm implementation, mainly developed by [Petry Ye](https://github.com/Ara-yjx) who is an undergraduate student major in CCS computing at UCSB.
 
 ## Usage
 ### Code Compilation
